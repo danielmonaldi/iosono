@@ -160,6 +160,11 @@ const INITIAL_INFLUENCERS = [
     bio: "Creador de contenido enfocado en moda masculina, estilo urbano y tendencias. Produzco videos en alta resolución con sonido cuidado y foco en engagement real.",
     responseTime: "< 2 horas",
     completionRate: "100%",
+    verificado: true,
+    recomendadoMarcas: true,
+    topNicho: true,
+    planActivo: "combo",
+    planVence: "25/11/2026",
     services: [
       { id:"s1", name:"Historia (1 story de 24h)", price:"USD 35", rawPrice:35, icon:"ti-clock", desc:"Story vertical con mención y sticker de enlace.", plazo:"24hs", active:true },
       { id:"s2", name:"Combo 3 Historias consecutivas", price:"USD 80", rawPrice:80, icon:"ti-stack-2", desc:"Secuencia narrativa de 3 stories mostrando producto en uso.", plazo:"48hs", active:true },
@@ -216,6 +221,11 @@ const INITIAL_INFLUENCERS = [
     bio: "Recorriendo las mejores cafeterías, bodegones y recetas de Buenos Aires. Videos dinámicos y tentadores para generar reservas y ventas inmediatas.",
     responseTime: "< 1 hora",
     completionRate: "98%",
+    verificado: true,
+    recomendadoMarcas: true,
+    topNicho: true,
+    planActivo: "combo",
+    planVence: "28/11/2026",
     services: [
       { id:"ni_s1", name:"Historia (1 story de 24h)", price:"USD 45", rawPrice:45, icon:"ti-clock", desc:"Story mostrando plato o café con sticker de reservas.", plazo:"24hs", active:true },
       { id:"ni_s3", name:"Reel hasta 30 seg.", price:"USD 140", rawPrice:140, icon:"ti-player-play", desc:"Reel dinámico con audio trending y texto en pantalla.", plazo:"48hs", active:true },
@@ -260,6 +270,11 @@ const INITIAL_INFLUENCERS = [
     bio: "Unboxings, análisis de gadgets y apps de productividad para emprendedores y creadores. Comunicación clara, técnica y persuasiva.",
     responseTime: "< 3 horas",
     completionRate: "100%",
+    verificado: true,
+    recomendadoMarcas: false,
+    topNicho: false,
+    planActivo: "verificado",
+    planVence: "15/11/2026",
     services: [
       { id:"lt_s1", name:"Historia (1 story de 24h)", price:"USD 40", rawPrice:40, icon:"ti-clock", desc:"Story con captura de pantalla y enlace directo a la app o web.", plazo:"24hs", active:true },
       { id:"lt_s3", name:"Reel hasta 60 seg. (Review Tech)", price:"USD 160", rawPrice:160, icon:"ti-video", desc:"Review completa de características y beneficios clave.", plazo:"72hs", active:true },
@@ -288,6 +303,11 @@ const INITIAL_INFLUENCERS = [
     bio: "Entrenadora y apasionada del bienestar integral. Rutinas motivadoras, recetas saludables y testeos de indumentaria deportiva.",
     responseTime: "< 2 horas",
     completionRate: "100%",
+    verificado: false,
+    recomendadoMarcas: false,
+    topNicho: false,
+    planActivo: null,
+    planVence: null,
     services: [
       { id:"sf_s1", name:"Historia (1 story de 24h)", price:"USD 35", rawPrice:35, icon:"ti-clock", desc:"Story entrenando con la prenda o suplemento.", plazo:"24hs", active:true },
       { id:"sf_s3", name:"Reel hasta 30 seg.", price:"USD 130", rawPrice:130, icon:"ti-player-play", desc:"Rutina rápida mostrando comodidad y resistencia del producto.", plazo:"48hs", active:true }
@@ -312,6 +332,11 @@ const INITIAL_INFLUENCERS = [
     bio: "Experiencias de viaje, hoteles boutique, gastronomía de autor y bodegas. Estética visual cinematográfica.",
     responseTime: "< 4 horas",
     completionRate: "97%",
+    verificado: false,
+    recomendadoMarcas: false,
+    topNicho: false,
+    planActivo: null,
+    planVence: null,
     services: [
       { id:"cv_s1", name:"Combo 3 Historias de estadía", price:"USD 110", rawPrice:110, icon:"ti-stack-2", desc:"Tour del hotel, habitación y amenities.", plazo:"24hs", active:true },
       { id:"cv_s4", name:"Reel Cinematográfico hasta 60s", price:"USD 240", rawPrice:240, icon:"ti-video", desc:"Tomas 4K editadas con música envolvente y etiquetas.", plazo:"72hs", active:true }
@@ -336,6 +361,11 @@ const INITIAL_INFLUENCERS = [
     bio: "Maquilladora profesional. Tutoriales paso a paso, swatches honestos y recomendaciones de skincare para todo tipo de piel.",
     responseTime: "< 2 horas",
     completionRate: "100%",
+    verificado: false,
+    recomendadoMarcas: false,
+    topNicho: false,
+    planActivo: null,
+    planVence: null,
     services: [
       { id:"mb_s1", name:"Historia (1 story de 24h)", price:"USD 30", rawPrice:30, icon:"ti-clock", desc:"Aplicación del producto en primer plano.", plazo:"24hs", active:true },
       { id:"mb_s3", name:"Reel hasta 30 seg. (Tutorial)", price:"USD 110", rawPrice:110, icon:"ti-player-play", desc:"Tutorial con antes y después del maquillaje.", plazo:"48hs", active:true }
@@ -1723,8 +1753,23 @@ function Profile({ inf, onBack, onNav, user }) {
           <div style={{ display:"flex", gap:14, alignItems:"flex-start", flexWrap:"wrap" }}>
             <AvatarEl initials={inf.initials} color={inf.color} textColor={inf.textColor} fotoUrl={inf.fotoUrl} size="lg" />
             <div style={{ flex:1 }}>
-              <div style={{ fontSize:22, fontWeight:600, marginBottom:3, display:"flex", alignItems:"center", gap:8 }}>
-                {inf.name} <span style={{ fontSize:11, color:"var(--green)" }}><i className="ti ti-rosette-discount-check" /> Verificado</span>
+              <div style={{ fontSize:22, fontWeight:600, marginBottom:3, display:"flex", alignItems:"center", gap:8, flexWrap:"wrap" }}>
+                {inf.name}
+                {(inf.verificado || inf.planActivo === "verificado" || inf.planActivo === "combo") && (
+                  <span style={{ fontSize:11, color:"var(--green)", display:"inline-flex", alignItems:"center", gap:4, background:"var(--green-bg)", border:"0.5px solid var(--green-border)", padding:"2px 8px", borderRadius:100 }}>
+                    <i className="ti ti-rosette-discount-check" /> Verificado Oficial
+                  </span>
+                )}
+                {(inf.topNicho || inf.planActivo === "top" || inf.planActivo === "combo") && (
+                  <span style={{ fontSize:11, color:"#111", background:"linear-gradient(135deg, #fbbf24, #f59e0b)", padding:"2px 8px", borderRadius:100, fontWeight:700, display:"inline-flex", alignItems:"center", gap:4 }}>
+                    <i className="ti ti-crown" /> Top del Nicho
+                  </span>
+                )}
+                {(inf.recomendadoMarcas || inf.planActivo === "recomendado" || inf.planActivo === "combo") && (
+                  <span style={{ fontSize:11, color:"var(--purple-lt)", background:"var(--purple-bg)", border:"0.5px solid var(--purple)", padding:"2px 8px", borderRadius:100, fontWeight:600, display:"inline-flex", alignItems:"center", gap:4 }}>
+                    <i className="ti ti-star" /> Recomendado a Marcas
+                  </span>
+                )}
               </div>
               <div style={{ fontSize:13, color:"var(--text2)", marginBottom:8 }}>
                 {inf.handle} · Instagram {inf.tiktok ? `· ${inf.tiktok} TikTok` : ""}
@@ -1913,7 +1958,12 @@ function Buscador({ onNav, user, onSelectInfluencer, influencersList = [] }) {
     }
   }, [influencersList]);
 
-  // Filtrado por texto y por nicho/categoría
+  // Creadores recomendados a marcas (Plan de USD 5 o Combo USD 15)
+  const recomendados = influencers.filter(inf => 
+    inf.recomendadoMarcas || inf.planActivo === "recomendado" || inf.planActivo === "combo"
+  );
+
+  // Filtrado por texto y por nicho/categoría con prioridad Top del Nicho
   const filtrados = influencers.filter(inf => {
     const q = busqueda.toLowerCase().trim();
     const matchTexto = !q || 
@@ -1928,6 +1978,12 @@ function Buscador({ onNav, user, onSelectInfluencer, influencersList = [] }) {
 
     return matchTexto && matchNicho;
   }).sort((a, b) => {
+    // 👑 Prioridad #1: Top del Nicho (Plan de USD 15 o Combo USD 15)
+    const aIsTop = Boolean(a.topNicho || a.planActivo === "top" || a.planActivo === "combo");
+    const bIsTop = Boolean(b.topNicho || b.planActivo === "top" || b.planActivo === "combo");
+    if (aIsTop && !bIsTop) return -1;
+    if (!aIsTop && bIsTop) return 1;
+
     if (ordenActivo === "rating") {
       return parseFloat(b.rating || 0) - parseFloat(a.rating || 0);
     }
@@ -2023,6 +2079,71 @@ function Buscador({ onNav, user, onSelectInfluencer, influencersList = [] }) {
         </select>
       </div>
 
+      {/* Sección Creadores Recomendados a Marcas (Plan USD 5 / Combo USD 15) */}
+      {!busqueda && nichoActivo === "todos" && recomendados.length > 0 && (
+        <div style={{ marginBottom: 18, background: "linear-gradient(135deg, rgba(124,58,237,0.14), rgba(251,191,36,0.08))", border: "1px solid rgba(167,139,250,0.35)", borderRadius: "var(--radius-lg)", padding: "14px 16px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <span style={{ fontSize: 18 }}>⭐</span>
+              <div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: "var(--text)" }}>
+                  Recomendados por Io Sono para tu marca
+                </div>
+                <div style={{ fontSize: 11, color: "var(--text2)" }}>
+                  Perfiles destacados con respuesta inmediata y 100% de cumplimiento
+                </div>
+              </div>
+            </div>
+            <span className="pill pill-amber" style={{ fontSize: 10, fontWeight: 700 }}>
+              <i className="ti ti-star-filled" /> PRO DESTACADOS
+            </span>
+          </div>
+
+          <div style={{ display: "flex", gap: 10, overflowX: "auto", paddingBottom: 6 }}>
+            {recomendados.map(rec => {
+              const activeSvcs = (rec.services || []).filter(s => s.active !== false);
+              const minP = activeSvcs.length > 0 ? Math.min(...activeSvcs.map(s => s.rawPrice || 35)) : 35;
+              return (
+                <div
+                  key={`rec_${rec.id}`}
+                  onClick={() => onSelectInfluencer(rec)}
+                  style={{
+                    flex: "0 0 200px",
+                    background: "var(--bg1)",
+                    border: "1px solid rgba(167,139,250,0.3)",
+                    borderRadius: "var(--radius)",
+                    padding: "12px",
+                    cursor: "pointer",
+                    transition: "all 0.2s"
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = "var(--purple-lt)"; e.currentTarget.style.transform = "translateY(-2px)"; }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(167,139,250,0.3)"; e.currentTarget.style.transform = "none"; }}
+                >
+                  <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 6 }}>
+                    <AvatarEl initials={rec.initials} fotoUrl={rec.fotoUrl} size="sm" />
+                    <div style={{ overflow: "hidden" }}>
+                      <div style={{ fontSize: 13, fontWeight: 600, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", display: "flex", alignItems: "center", gap: 4 }}>
+                        {rec.name}
+                        {(rec.verificado || rec.planActivo === "verificado" || rec.planActivo === "combo") && (
+                          <i className="ti ti-rosette-discount-check" style={{ color: "var(--green)", fontSize: 12 }} />
+                        )}
+                      </div>
+                      <div style={{ fontSize: 10, color: "var(--text2)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                        {rec.niche}
+                      </div>
+                    </div>
+                  </div>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 11, marginTop: 6, paddingTop: 6, borderTop: "0.5px solid var(--border)" }}>
+                    <span style={{ color: "var(--amber)", fontWeight: 600 }}>⭐ {rec.rating || "9.9"}</span>
+                    <span style={{ color: "var(--purple-lt)", fontWeight: 600 }}>Desde USD {minP}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {/* Listado de Tarjetas */}
       {filtrados.length === 0 ? (
         <div className="card" style={{ textAlign:"center", padding:"36px 16px", marginTop:10 }}>
@@ -2049,17 +2170,34 @@ function Buscador({ onNav, user, onSelectInfluencer, influencersList = [] }) {
                 <div style={{ flex:1 }}>
                   <div style={{ fontSize:15, fontWeight:600, display:"flex", alignItems:"center", gap:6 }}>
                     {inf.name}
-                    <span style={{ fontSize:12, color:"var(--green)" }} title="Verificado con identidad confirmada">
-                      <i className="ti ti-rosette-discount-check" />
-                    </span>
+                    {(inf.verificado || inf.planActivo === "verificado" || inf.planActivo === "combo") && (
+                      <span style={{ fontSize:13, color:"var(--green)", display:"inline-flex", alignItems:"center" }} title="Verificado Oficial por Io Sono">
+                        <i className="ti ti-rosette-discount-check" />
+                      </span>
+                    )}
                   </div>
                   <div style={{ fontSize:12, color:"var(--text2)" }}>{inf.handle} · {inf.zone}</div>
                 </div>
                 <span className="pill pill-purple" style={{ fontSize:10 }}>{inf.niche}</span>
               </div>
 
-              {/* Insignias de confianza y rapidez */}
-              <div style={{ display:"flex", gap:6, marginBottom:10, flexWrap:"wrap" }}>
+              {/* Insignias de confianza, Pro Boost y rapidez */}
+              <div style={{ display:"flex", gap:6, marginBottom:10, flexWrap:"wrap", alignItems:"center" }}>
+                {(inf.topNicho || inf.planActivo === "top" || inf.planActivo === "combo") && (
+                  <span style={{ fontSize:10, fontWeight:700, color:"#111", background:"linear-gradient(135deg, #fbbf24, #f59e0b)", padding:"2px 8px", borderRadius:4, display:"inline-flex", alignItems:"center", gap:4, boxShadow:"0 2px 8px rgba(251,191,36,0.3)" }}>
+                    <i className="ti ti-crown" /> Top del Nicho
+                  </span>
+                )}
+                {(inf.recomendadoMarcas || inf.planActivo === "recomendado" || inf.planActivo === "combo") && (
+                  <span style={{ fontSize:10, fontWeight:600, color:"var(--purple-lt)", background:"var(--purple-bg)", padding:"2px 8px", borderRadius:4, border:"0.5px solid var(--purple)", display:"inline-flex", alignItems:"center", gap:4 }}>
+                    <i className="ti ti-star" /> Recomendado
+                  </span>
+                )}
+                {(inf.verificado || inf.planActivo === "verificado" || inf.planActivo === "combo") && (
+                  <span style={{ fontSize:10, fontWeight:600, color:"var(--green)", background:"var(--green-bg)", padding:"2px 8px", borderRadius:4, border:"0.5px solid var(--green-border)", display:"inline-flex", alignItems:"center", gap:4 }}>
+                    <i className="ti ti-shield-check" /> Verificado
+                  </span>
+                )}
                 <span style={{ fontSize:10, color:"var(--green)", background:"var(--bg2)", padding:"2px 8px", borderRadius:4, border:"0.5px solid var(--border)" }}>
                   ⚡ Responde {inf.responseTime || "< 2h"}
                 </span>
@@ -2170,9 +2308,92 @@ function CreatorProfileEditor({ influencer, onSave, onPreview, onNav }) {
     banco: "Mercado Pago"
   });
 
-  const [activeTab, setActiveTab] = useState("identidad"); // identidad | servicios | portfolio | condiciones | cobros
+  // Estado de Facturación Extra / Planes Pro Io Sono
+  const [planActivo, setPlanActivo] = useState(currentInf.planActivo || null);
+  const [planVence, setPlanVence] = useState(currentInf.planVence || null);
+  const [verificado, setVerificado] = useState(currentInf.verificado ?? false);
+  const [recomendadoMarcas, setRecomendadoMarcas] = useState(currentInf.recomendadoMarcas ?? false);
+  const [topNicho, setTopNicho] = useState(currentInf.topNicho ?? false);
+
+  const [activeTab, setActiveTab] = useState("identidad"); // identidad | planes | servicios | portfolio | condiciones | cobros
   const [savedSuccess, setSavedSuccess] = useState(false);
   const fileInputRef = useRef(null);
+
+  // Activación / Cancelación de Planes de Facturación Extra
+  const handleActivarPlan = (tipo) => {
+    const hoy = new Date();
+    const venc = new Date(hoy.setDate(hoy.getDate() + 30));
+    const fechaVenc = `${venc.getDate().toString().padStart(2, "0")}/${(venc.getMonth() + 1).toString().padStart(2, "0")}/${venc.getFullYear()}`;
+
+    let nuevoVerif = false;
+    let nuevoRec = false;
+    let nuevoTop = false;
+    let nuevoPlan = null;
+    let nuevaFecha = null;
+
+    if (tipo === "cancelar") {
+      nuevoPlan = null;
+      nuevaFecha = null;
+      nuevoVerif = false;
+      nuevoRec = false;
+      nuevoTop = false;
+    } else if (tipo === "verificado") {
+      nuevoPlan = "verificado";
+      nuevaFecha = fechaVenc;
+      nuevoVerif = true;
+      nuevoRec = false;
+      nuevoTop = false;
+    } else if (tipo === "recomendado") {
+      nuevoPlan = "recomendado";
+      nuevaFecha = fechaVenc;
+      nuevoVerif = false;
+      nuevoRec = true;
+      nuevoTop = false;
+    } else if (tipo === "top") {
+      nuevoPlan = "top";
+      nuevaFecha = fechaVenc;
+      nuevoVerif = false;
+      nuevoRec = false;
+      nuevoTop = true;
+    } else if (tipo === "combo") {
+      nuevoPlan = "combo";
+      nuevaFecha = fechaVenc;
+      nuevoVerif = true;
+      nuevoRec = true;
+      nuevoTop = true;
+    }
+
+    setPlanActivo(nuevoPlan);
+    setPlanVence(nuevaFecha);
+    setVerificado(nuevoVerif);
+    setRecomendadoMarcas(nuevoRec);
+    setTopNicho(nuevoTop);
+
+    const updated = {
+      ...currentInf,
+      name: nombre,
+      handle: handle,
+      tiktok: tiktok,
+      niche: niche,
+      zone: zone,
+      responseTime: responseTime,
+      bio: bio,
+      fotoUrl: fotoUrl,
+      services: services,
+      portfolio: portfolio,
+      condiciones: condiciones,
+      banco: banco,
+      planActivo: nuevoPlan,
+      planVence: nuevaFecha,
+      verificado: nuevoVerif,
+      recomendadoMarcas: nuevoRec,
+      topNicho: nuevoTop
+    };
+
+    onSave?.(updated);
+    setSavedSuccess(true);
+    setTimeout(() => setSavedSuccess(false), 3000);
+  };
 
   // Subir / Cambiar foto de perfil
   const handlePhotoUpload = (e) => {
@@ -2288,7 +2509,12 @@ function CreatorProfileEditor({ influencer, onSave, onPreview, onNav }) {
     services: services,
     portfolio: portfolio,
     condiciones: condiciones,
-    banco: banco
+    banco: banco,
+    planActivo: planActivo,
+    planVence: planVence,
+    verificado: verificado,
+    recomendadoMarcas: recomendadoMarcas,
+    topNicho: topNicho
   });
 
   const handleGuardarCambios = () => {
@@ -2340,6 +2566,7 @@ function CreatorProfileEditor({ influencer, onSave, onPreview, onNav }) {
       <div className="toggle-bar" style={{ overflowX:"auto" }}>
         {[
           { id:"identidad", label:"👤 Identidad y Redes" },
+          { id:"planes", label: planActivo ? `🚀 Facturación Pro (${planActivo === "combo" ? "Combo $15" : planActivo === "verificado" ? "Verificado $1" : planActivo === "recomendado" ? "Recomendado $5" : "Top $15"})` : "🚀 Facturación Extra (Pro)" },
           { id:"servicios", label:`💵 Servicios (${services.filter(s=>s.active!==false).length})` },
           { id:"portfolio", label:`🎬 Portfolio (${portfolio.length})` },
           { id:"condiciones", label:`📌 Mis Condiciones (${condiciones.length})` },
@@ -2437,6 +2664,243 @@ function CreatorProfileEditor({ influencer, onSave, onPreview, onNav }) {
               placeholder="Contale a las marcas qué tipo de contenido creás, tu audiencia y por qué les conviene contratarte..."
               style={{ minHeight:90 }}
             />
+          </div>
+        </div>
+      )}
+
+      {/* ─── PESTAÑA PRO: FACTURACIÓN EXTRA & IMPULSO DE PERFIL (PRO BOOST) ─── */}
+      {activeTab === "planes" && (
+        <div>
+          {/* Banner de Estado Actual */}
+          <div className="card" style={{ background: planActivo ? "linear-gradient(135deg, #1b122c, #0d1a13)" : "var(--bg1)", border: `1px solid ${planActivo ? "var(--purple)" : "var(--border)"}`, marginBottom:16 }}>
+            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", flexWrap:"wrap", gap:10 }}>
+              <div>
+                <div style={{ fontSize:11, textTransform:"uppercase", letterSpacing:"0.08em", color: planActivo ? "var(--purple-lt)" : "var(--text2)", fontWeight:700 }}>
+                  Estado de Suscripción Io Sono Pro
+                </div>
+                <div style={{ fontSize:18, fontWeight:700, marginTop:2, display:"flex", alignItems:"center", gap:8 }}>
+                  {planActivo === "combo" && <span>🔥 Combo Pro Total Activo</span>}
+                  {planActivo === "verificado" && <span>🛡️ Tilde de Verificación Activo</span>}
+                  {planActivo === "recomendado" && <span>⭐ Recomendación a Marcas Activa</span>}
+                  {planActivo === "top" && <span>👑 Top 1 en el Nicho Activo</span>}
+                  {!planActivo && <span style={{ color:"var(--text2)" }}>Sin suscripciones activas (Perfil Básico)</span>}
+                </div>
+                {planActivo && (
+                  <div style={{ fontSize:12, color:"var(--text2)", marginTop:4 }}>
+                    Renovación automática: <strong>{planVence || "30 días"}</strong> · Cobro mensual a tu saldo o tarjeta
+                  </div>
+                )}
+              </div>
+              {planActivo && (
+                <button
+                  type="button"
+                  className="btn btn-sm btn-outline"
+                  style={{ color:"var(--red)", borderColor:"var(--red-border)", fontSize:11 }}
+                  onClick={() => handleActivarPlan("cancelar")}
+                >
+                  Pausar / Cancelar suscripción
+                </button>
+              )}
+            </div>
+          </div>
+
+          <div style={{ marginBottom:14 }}>
+            <div style={{ fontSize:15, fontWeight:700 }}>Opciones de Facturación Extra para Creadores</div>
+            <div style={{ fontSize:12, color:"var(--text2)", marginTop:2 }}>
+              Aumentá tus contrataciones destacando tu perfil en el catálogo oficial de marcas
+            </div>
+          </div>
+
+          <div className="grid-2" style={{ gap:12 }}>
+            {/* PLAN 1: Tilde de Verificación ($1/mes) */}
+            <div
+              className="card"
+              style={{
+                marginBottom:0,
+                border: planActivo === "verificado" ? "1.5px solid var(--green)" : "0.5px solid var(--border)",
+                background: planActivo === "verificado" ? "rgba(52,211,153,0.06)" : "var(--bg1)",
+                display:"flex",
+                flexDirection:"column",
+                justifyContent:"space-between"
+              }}
+            >
+              <div>
+                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:8 }}>
+                  <div style={{ width:36, height:36, borderRadius:8, background:"var(--green-bg)", border:"0.5px solid var(--green-border)", display:"flex", alignItems:"center", justifyContent:"center", color:"var(--green)", fontSize:20 }}>
+                    <i className="ti ti-rosette-discount-check" />
+                  </div>
+                  {planActivo === "verificado" ? (
+                    <span className="pill pill-green" style={{ fontSize:10, fontWeight:700 }}>✓ ACTIVO</span>
+                  ) : (
+                    <span className="pill pill-gray" style={{ fontSize:10 }}>BÁSICO</span>
+                  )}
+                </div>
+                <div style={{ fontSize:15, fontWeight:700, marginBottom:4 }}>Tilde de Verificación</div>
+                <div style={{ fontSize:20, fontWeight:800, color:"var(--green)", marginBottom:4 }}>
+                  USD 1 <span style={{ fontSize:12, color:"var(--text2)", fontWeight:400 }}>/ mes</span>
+                </div>
+                <div style={{ fontSize:11, color:"var(--text2)", marginBottom:10 }}>
+                  ≈ $1.400 ARS por mes
+                </div>
+                <div style={{ fontSize:12, color:"var(--text2)", lineHeight:1.5, display:"flex", flexDirection:"column", gap:6, marginBottom:16 }}>
+                  <div>✓ Tilde verde oficial junto a tu nombre</div>
+                  <div>✓ Prioridad de autenticidad frente a marcas</div>
+                  <div>✓ Evita suplantaciones de identidad</div>
+                </div>
+              </div>
+              <button
+                type="button"
+                className={`btn btn-sm ${planActivo === "verificado" ? "btn-outline" : "btn-green"}`}
+                style={{ width:"100%" }}
+                onClick={() => handleActivarPlan("verificado")}
+              >
+                {planActivo === "verificado" ? "✓ Plan Activo" : "Activar por USD 1/mes"}
+              </button>
+            </div>
+
+            {/* PLAN 2: Recomendación a Marcas ($5/mes) */}
+            <div
+              className="card"
+              style={{
+                marginBottom:0,
+                border: planActivo === "recomendado" ? "1.5px solid var(--purple)" : "0.5px solid var(--border)",
+                background: planActivo === "recomendado" ? "rgba(124,58,237,0.08)" : "var(--bg1)",
+                display:"flex",
+                flexDirection:"column",
+                justifyContent:"space-between"
+              }}
+            >
+              <div>
+                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:8 }}>
+                  <div style={{ width:36, height:36, borderRadius:8, background:"var(--purple-bg)", border:"0.5px solid var(--purple)", display:"flex", alignItems:"center", justifyContent:"center", color:"var(--purple-lt)", fontSize:20 }}>
+                    <i className="ti ti-star" />
+                  </div>
+                  {planActivo === "recomendado" ? (
+                    <span className="pill pill-purple" style={{ fontSize:10, fontWeight:700 }}>✓ ACTIVO</span>
+                  ) : (
+                    <span className="pill pill-gray" style={{ fontSize:10 }}>DESTACADO</span>
+                  )}
+                </div>
+                <div style={{ fontSize:15, fontWeight:700, marginBottom:4 }}>Recomendación a Marcas</div>
+                <div style={{ fontSize:20, fontWeight:800, color:"var(--purple-lt)", marginBottom:4 }}>
+                  USD 5 <span style={{ fontSize:12, color:"var(--text2)", fontWeight:400 }}>/ mes</span>
+                </div>
+                <div style={{ fontSize:11, color:"var(--text2)", marginBottom:10 }}>
+                  ≈ $7.000 ARS por mes
+                </div>
+                <div style={{ fontSize:12, color:"var(--text2)", lineHeight:1.5, display:"flex", flexDirection:"column", gap:6, marginBottom:16 }}>
+                  <div>✓ Aparecé en el carrusel superior del catálogo</div>
+                  <div>✓ Badge exclusivo "Recomendado por Io Sono"</div>
+                  <div>✓ 4x más propuestas directas de marcas</div>
+                </div>
+              </div>
+              <button
+                type="button"
+                className={`btn btn-sm ${planActivo === "recomendado" ? "btn-outline" : "btn-primary"}`}
+                style={{ width:"100%" }}
+                onClick={() => handleActivarPlan("recomendado")}
+              >
+                {planActivo === "recomendado" ? "✓ Plan Activo" : "Activar por USD 5/mes"}
+              </button>
+            </div>
+
+            {/* PLAN 3: Top 1 en el Nicho ($15/mes) */}
+            <div
+              className="card"
+              style={{
+                marginBottom:0,
+                border: planActivo === "top" ? "1.5px solid var(--amber)" : "0.5px solid var(--border)",
+                background: planActivo === "top" ? "rgba(251,191,36,0.08)" : "var(--bg1)",
+                display:"flex",
+                flexDirection:"column",
+                justifyContent:"space-between"
+              }}
+            >
+              <div>
+                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:8 }}>
+                  <div style={{ width:36, height:36, borderRadius:8, background:"var(--amber-bg)", border:"0.5px solid var(--amber-border)", display:"flex", alignItems:"center", justifyContent:"center", color:"var(--amber)", fontSize:20 }}>
+                    <i className="ti ti-crown" />
+                  </div>
+                  {planActivo === "top" ? (
+                    <span className="pill pill-amber" style={{ fontSize:10, fontWeight:700 }}>✓ ACTIVO</span>
+                  ) : (
+                    <span className="pill pill-gray" style={{ fontSize:10 }}>EXCLUSIVO</span>
+                  )}
+                </div>
+                <div style={{ fontSize:15, fontWeight:700, marginBottom:4 }}>Top 1 en el Nicho</div>
+                <div style={{ fontSize:20, fontWeight:800, color:"var(--amber)", marginBottom:4 }}>
+                  USD 15 <span style={{ fontSize:12, color:"var(--text2)", fontWeight:400 }}>/ mes</span>
+                </div>
+                <div style={{ fontSize:11, color:"var(--text2)", marginBottom:10 }}>
+                  ≈ $21.000 ARS por mes
+                </div>
+                <div style={{ fontSize:12, color:"var(--text2)", lineHeight:1.5, display:"flex", flexDirection:"column", gap:6, marginBottom:16 }}>
+                  <div>✓ Puesto #1 garantizado en "{niche}"</div>
+                  <div>✓ Corona dorada "Top del Nicho" en tu tarjeta</div>
+                  <div>✓ Máximo posicionamiento frente a anunciantes</div>
+                </div>
+              </div>
+              <button
+                type="button"
+                className={`btn btn-sm ${planActivo === "top" ? "btn-outline" : "btn-primary"}`}
+                style={{ width:"100%", background: planActivo === "top" ? "transparent" : "#d97706", borderColor:"#d97706" }}
+                onClick={() => handleActivarPlan("top")}
+              >
+                {planActivo === "top" ? "✓ Plan Activo" : "Activar por USD 15/mes"}
+              </button>
+            </div>
+
+            {/* PLAN 4: COMBO PRO TOTAL ($15/mes - LAS 3 JUNTAS) */}
+            <div
+              className="card"
+              style={{
+                marginBottom:0,
+                border: "2px solid #7c3aed",
+                background: "linear-gradient(135deg, rgba(124,58,237,0.18), rgba(251,191,36,0.1))",
+                boxShadow: "0 8px 24px rgba(124,58,237,0.25)",
+                display:"flex",
+                flexDirection:"column",
+                justifyContent:"space-between",
+                position:"relative"
+              }}
+            >
+              <div>
+                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:8 }}>
+                  <div style={{ width:36, height:36, borderRadius:8, background:"linear-gradient(135deg, #7c3aed, #d97706)", display:"flex", alignItems:"center", justifyContent:"center", color:"#fff", fontSize:20 }}>
+                    <i className="ti ti-flame" />
+                  </div>
+                  <span className="pill pill-amber" style={{ fontSize:10, fontWeight:800, letterSpacing:"0.05em" }}>
+                    🔥 PROMO LAS 3 POR $15
+                  </span>
+                </div>
+                <div style={{ fontSize:16, fontWeight:800, marginBottom:2 }}>Combo Pro Total</div>
+                <div style={{ fontSize:11, color:"var(--purple-lt)", fontWeight:600, marginBottom:4 }}>
+                  Tilde ($1) + Recomendado ($5) + Top Nicho ($15)
+                </div>
+                <div style={{ display:"flex", alignItems:"baseline", gap:6, marginBottom:4 }}>
+                  <div style={{ fontSize:22, fontWeight:800, color:"#fff" }}>USD 15</div>
+                  <div style={{ fontSize:12, color:"var(--text2)", textDecoration:"line-through" }}>USD 21</div>
+                  <span className="pill pill-green" style={{ fontSize:9, padding:"2px 6px" }}>Ahorrás USD 6</span>
+                </div>
+                <div style={{ fontSize:11, color:"var(--text2)", marginBottom:10 }}>
+                  ≈ $21.000 ARS por mes
+                </div>
+                <div style={{ fontSize:12, color:"var(--text)", lineHeight:1.5, display:"flex", flexDirection:"column", gap:6, marginBottom:16 }}>
+                  <div>✓ <strong>Tilde de Verificación Oficial</strong></div>
+                  <div>✓ <strong>Aparición en "Recomendados a Marcas"</strong></div>
+                  <div>✓ <strong>Puesto #1 Top del Nicho</strong> garantizado</div>
+                  <div>✓ Máxima conversión y contratación en Io Sono</div>
+                </div>
+              </div>
+              <button
+                type="button"
+                className={`btn btn-sm ${planActivo === "combo" ? "btn-outline" : "btn-primary"}`}
+                style={{ width:"100%", background: planActivo === "combo" ? "transparent" : "linear-gradient(135deg, var(--purple), #6d28d9)", fontWeight:700 }}
+                onClick={() => handleActivarPlan("combo")}
+              >
+                {planActivo === "combo" ? "✓ Combo Activo" : "¡Quiero el Combo por USD 15/mes!"}
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -2858,7 +3322,7 @@ function CreatorProfileEditor({ influencer, onSave, onPreview, onNav }) {
 }
 
 // ─── CENTRO DE CONTROL, DELEGACIÓN Y MEDIACIÓN ANTIFRAUDE ────────────────────
-function AdminDashboard({ user, campañas, onUpdateCampaña, onNav }) {
+function AdminDashboard({ user, campañas, onUpdateCampaña, onNav, influencersList = [] }) {
   const [activeMediador, setActiveMediador] = useState("Daniel Monaldi (Super Admin)");
   const [tabAdmin, setTabAdmin] = useState("reclamos"); // "reclamos" | "finanzas" | "equipo" | "historial"
   const [filtroTipo, setFiltroTipo] = useState("todos"); // "todos" | "cancelaciones" | "disputas" | "mis_casos"
@@ -2907,6 +3371,18 @@ function AdminDashboard({ user, campañas, onUpdateCampaña, onNav }) {
     .reduce((acc, c) => acc + (c.monto || 0), 0);
 
   const comisionIoSono = totalEnCustodia * 0.15;
+
+  // Creadores con suscripción Pro Boost activa y cálculo de MRR
+  const listaInfluencers = influencersList.length > 0 ? influencersList : INITIAL_INFLUENCERS;
+  const influencersConPlan = listaInfluencers.filter(inf => Boolean(inf.planActivo));
+  const mrrTotal = influencersConPlan.reduce((acc, inf) => {
+    if (inf.planActivo === "verificado") return acc + 1;
+    if (inf.planActivo === "recomendado") return acc + 5;
+    if (inf.planActivo === "top") return acc + 15;
+    if (inf.planActivo === "combo") return acc + 15;
+    return acc;
+  }, 0);
+  const facturacionTotalProyectada = comisionIoSono + mrrTotal;
 
   const [textoConsulta, setTextoConsulta] = useState({});
   const [destinatarioConsulta, setDestinatarioConsulta] = useState({});
@@ -3315,34 +3791,131 @@ function AdminDashboard({ user, campañas, onUpdateCampaña, onNav }) {
       {/* PESTAÑA 2: FINANZAS Y CUSTODIA (SOLO SUPER ADMIN) */}
       {tabAdmin === "finanzas" && isSuperAdmin && (
         <div>
-          <div className="grid-2" style={{ marginBottom:14 }}>
-            <div className="card" style={{ padding:"16px", textAlign:"center" }}>
+          <div className="grid-3" style={{ marginBottom:14 }}>
+            <div className="card" style={{ padding:"16px", textAlign:"center", marginBottom:0 }}>
               <div style={{ fontSize:11, color:"var(--text2)", textTransform:"uppercase", letterSpacing:"0.06em", marginBottom:4 }}>
                 Total en Custodia (Escrow)
               </div>
-              <div style={{ fontSize:24, fontWeight:700, color:"var(--green)" }}>
+              <div style={{ fontSize:22, fontWeight:700, color:"var(--green)" }}>
                 USD {totalEnCustodia.toFixed(2)}
               </div>
-              <div style={{ fontSize:11, color:"var(--text2)", marginTop:2 }}>
+              <div style={{ fontSize:10, color:"var(--text2)", marginTop:2 }}>
                 ≈ ${(totalEnCustodia * 1400).toLocaleString("es-AR")} ARS
               </div>
             </div>
 
-            <div className="card" style={{ padding:"16px", textAlign:"center" }}>
+            <div className="card" style={{ padding:"16px", textAlign:"center", marginBottom:0 }}>
               <div style={{ fontSize:11, color:"var(--text2)", textTransform:"uppercase", letterSpacing:"0.06em", marginBottom:4 }}>
-                Comisiones Io Sono (15%)
+                Comisiones Campañas (15%)
               </div>
-              <div style={{ fontSize:24, fontWeight:700, color:"var(--purple-lt)" }}>
+              <div style={{ fontSize:22, fontWeight:700, color:"var(--purple-lt)" }}>
                 USD {comisionIoSono.toFixed(2)}
               </div>
-              <div style={{ fontSize:11, color:"var(--text2)", marginTop:2 }}>
+              <div style={{ fontSize:10, color:"var(--text2)", marginTop:2 }}>
                 Take-rate de intermediación
+              </div>
+            </div>
+
+            <div className="card" style={{ padding:"16px", textAlign:"center", marginBottom:0, border:"1px solid var(--amber-border)", background:"rgba(251,191,36,0.06)" }}>
+              <div style={{ fontSize:11, color:"var(--amber)", textTransform:"uppercase", letterSpacing:"0.06em", marginBottom:4, fontWeight:700 }}>
+                🚀 Facturación Extra (MRR)
+              </div>
+              <div style={{ fontSize:22, fontWeight:800, color:"var(--amber)" }}>
+                USD {mrrTotal.toFixed(2)} <span style={{ fontSize:11, fontWeight:400 }}>/ mes</span>
+              </div>
+              <div style={{ fontSize:10, color:"var(--text2)", marginTop:2 }}>
+                {influencersConPlan.length} creador{influencersConPlan.length === 1 ? "" : "es"} Pro suscrito{influencersConPlan.length === 1 ? "" : "s"}
               </div>
             </div>
           </div>
 
+          {/* Tarjeta de Consolidado Financiero Total */}
+          <div className="card" style={{ background:"linear-gradient(135deg, #1b122c, #0e0a17)", border:"1.5px solid var(--purple)", marginBottom:14, padding:"16px 20px" }}>
+            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", flexWrap:"wrap", gap:10 }}>
+              <div>
+                <div style={{ fontSize:11, textTransform:"uppercase", letterSpacing:"0.08em", color:"var(--purple-lt)", fontWeight:700 }}>
+                  Ingresos Totales Proyectados de Io Sono
+                </div>
+                <div style={{ fontSize:24, fontWeight:800, marginTop:3 }}>
+                  USD {facturacionTotalProyectada.toFixed(2)} <span style={{ fontSize:13, fontWeight:400, color:"var(--text2)" }}>≈ ${(facturacionTotalProyectada * 1400).toLocaleString("es-AR")} ARS</span>
+                </div>
+                <div style={{ fontSize:11, color:"var(--text2)", marginTop:3 }}>
+                  Comisiones 15% escrow (USD {comisionIoSono.toFixed(2)}) + Suscripciones recurrentes (USD {mrrTotal.toFixed(2)})
+                </div>
+              </div>
+              <span className="pill pill-green" style={{ fontSize:11, fontWeight:700 }}>
+                ✓ NEGOCIO RENTABLE
+              </span>
+            </div>
+          </div>
+
+          {/* Tabla de Creadores con Planes Pro Activos */}
+          <div className="card" style={{ marginBottom:14 }}>
+            <div className="card-title">
+              <span>Creadores con Suscripción Pro Boost Activa ({influencersConPlan.length})</span>
+              <span style={{ fontSize:11, color:"var(--amber)", fontWeight:700 }}>MRR: USD {mrrTotal}/mes</span>
+            </div>
+
+            {influencersConPlan.length === 0 ? (
+              <div style={{ textAlign:"center", padding:"20px", color:"var(--text2)", fontSize:12 }}>
+                Aún no hay creadores con suscripciones activas.
+              </div>
+            ) : (
+              <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
+                {influencersConPlan.map(inf => {
+                  const planPrecio = inf.planActivo === "verificado" ? 1 : inf.planActivo === "recomendado" ? 5 : 15;
+                  const planEtiqueta = 
+                    inf.planActivo === "combo" ? "🔥 Combo Pro Total ($15/mes)" :
+                    inf.planActivo === "top" ? "👑 Top del Nicho ($15/mes)" :
+                    inf.planActivo === "recomendado" ? "⭐ Recomendado a Marcas ($5/mes)" :
+                    "🛡️ Tilde de Verificación ($1/mes)";
+
+                  return (
+                    <div
+                      key={inf.id}
+                      style={{
+                        display:"flex",
+                        justifyContent:"space-between",
+                        alignItems:"center",
+                        padding:"10px 12px",
+                        background:"var(--bg2)",
+                        border:"0.5px solid var(--border)",
+                        borderRadius:"var(--radius-sm)",
+                        flexWrap:"wrap",
+                        gap:8
+                      }}
+                    >
+                      <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+                        <AvatarEl initials={inf.initials} fotoUrl={inf.fotoUrl} size="sm" />
+                        <div>
+                          <div style={{ fontSize:13, fontWeight:600, display:"flex", alignItems:"center", gap:6 }}>
+                            {inf.name}
+                            <span style={{ fontSize:11, color:"var(--text2)" }}>{inf.handle}</span>
+                          </div>
+                          <div style={{ fontSize:11, color:"var(--purple-lt)" }}>
+                            {planEtiqueta} · {inf.niche}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div style={{ textAlign:"right" }}>
+                        <div style={{ fontSize:13, fontWeight:700, color:"var(--green)" }}>
+                          +USD {planPrecio} / mes
+                        </div>
+                        <div style={{ fontSize:10, color:"var(--text2)" }}>
+                          Vence: {inf.planVence || "30 días"} · <span style={{ color:"var(--green)" }}>Activo</span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* Desglose de Fondos por Campaña */}
           <div className="card">
-            <div className="card-title">Desglose de Fondos por Campaña</div>
+            <div className="card-title">Desglose de Fondos por Campaña (Escrow)</div>
             {campañas.map(c => (
               <div key={c.id} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"10px 0", borderBottom:"0.5px solid var(--border)" }}>
                 <div>
@@ -3351,7 +3924,7 @@ function AdminDashboard({ user, campañas, onUpdateCampaña, onNav }) {
                 </div>
                 <div style={{ textAlign:"right" }}>
                   <div style={{ fontSize:13, fontWeight:700 }}>USD {c.monto}</div>
-                  <div style={{ fontSize:10, color:"var(--purple-lt)" }}>Comisión: USD {(c.monto * 0.15).toFixed(2)}</div>
+                  <div style={{ fontSize:10, color:"var(--purple-lt)" }}>Comisión (15%): USD {(c.monto * 0.15).toFixed(2)}</div>
                 </div>
               </div>
             ))}
@@ -3732,6 +4305,7 @@ export default function IoSono() {
             campañas={campañas}
             onUpdateCampaña={handleUpdateCampaña}
             onNav={nav}
+            influencersList={influencers}
           />
         )}
         {screen === "login" && (
