@@ -21,8 +21,14 @@ const styles = `
   }
   body {
     font-family:var(--font-body);
-    background: radial-gradient(circle at 50% 0%, #1a1728 0%, #0f0e15 65%, #0b0a10 100%);
+    background-color: #12101b;
+    background-image: 
+      radial-gradient(circle at 50% -10%, rgba(139, 92, 246, 0.28) 0%, transparent 65%),
+      radial-gradient(circle at 100% 60%, rgba(124, 58, 237, 0.12) 0%, transparent 50%),
+      radial-gradient(circle at 0% 90%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+      url("data:image/svg+xml,%3Csvg width='240' height='240' viewBox='0 0 240 240' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='50%25' y='45%25' dominant-baseline='middle' text-anchor='middle' font-family='Playfair Display, serif' font-style='italic' font-weight='600' font-size='22' fill='%23a78bfa' fill-opacity='0.035'%3EIo Sono%3C/text%3E%3Ccircle cx='120' cy='120' r='1.5' fill='%23ffffff' fill-opacity='0.06'/%3E%3C/svg%3E");
     background-attachment: fixed;
+    background-repeat: repeat;
     color:var(--text);
     min-height:100vh;
     -webkit-font-smoothing:antialiased;
