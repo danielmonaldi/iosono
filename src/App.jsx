@@ -1120,6 +1120,7 @@ function CampañasView({ user, campañas, onUpdateCampaña, onOpenRating, onNav 
             camp.estado==="borrador_aprobado" ? "pill-green" :
             camp.estado==="publicado_revision" ? "pill-amber" :
             camp.estado==="finalizado" ? "pill-green" :
+            camp.estado==="rechazado" ? "pill-red" :
             camp.estado==="disputa" ? "pill-red" :
             camp.estado==="reembolso_total" ? "pill-red" : "pill-gray"
           }`}>
@@ -1132,6 +1133,7 @@ function CampañasView({ user, campañas, onUpdateCampaña, onOpenRating, onNav 
             {camp.estado==="borrador_aprobado" && "🎉 Borrador Aprobado"}
             {camp.estado==="publicado_revision" && "⏱️ Reloj de 36hs activo"}
             {camp.estado==="finalizado" && "✓ Finalizado y Pagado"}
+            {camp.estado==="rechazado" && "❌ Propuesta Declinada"}
             {camp.estado==="disputa" && "⚠️ Reclamo en Mediación"}
             {camp.estado==="reembolso_total" && "💰 Reembolsado 100%"}
           </span>
@@ -1604,8 +1606,43 @@ function CampañasView({ user, campañas, onUpdateCampaña, onOpenRating, onNav 
         </div>
       )}
 
-      {/* ─── CHAT INCORPORADO (Solo si no está en propuesta_pendiente) ─── */}
-      {camp.estado !== "propuesta_pendiente" && (
+      {/* ─── ESTADO: PROPUESTA DECLINADA / RECHAZADA ─── */}
+      {camp.estado === "rechazado" && (
+        <div className="card" style={{ background:"var(--red-bg)", border:"1px solid var(--red-border)", padding:"24px 18px", textAlign:"center", marginBottom:14 }}>
+          <i className="ti ti-circle-x" style={{ fontSize:40, color:"var(--red)", display:"block", marginBottom:8 }} />
+          <div style={{ fontSize:17, fontWeight:700, color:"var(--red)" }}>Propuesta Declinada</div>
+          <div style={{ fontSize:13, color:"var(--text2)", marginTop:6, lineHeight:1.5 }}>
+            {isMarca ? (
+              <>
+                <strong>{camp.influencer_nombre}</strong> declinó la propuesta de trabajo para <strong>{camp.servicio_nombre}</strong>.
+                <br />
+                Los <strong>USD {camp.monto}</strong> retenidos en custodia preventiva fueron liberados y reembolsados a tu cuenta al 100%.
+              </>
+            ) : (
+              <>
+                Declinaste la propuesta de <strong>{camp.marca_nombre}</strong>.
+                <br />
+                La campaña fue cerrada sin penalizaciones y los fondos fueron reintegrados automáticamente a la marca.
+              </>
+            )}
+          </div>
+          <div style={{ marginTop:14 }}>
+            <span className="pill pill-green" style={{ fontSize:12 }}>
+              ✓ Reembolso del 100% (USD {camp.monto}) completado
+            </span>
+          </div>
+          {isMarca && (
+            <div style={{ marginTop:16 }}>
+              <button className="btn btn-primary btn-sm" onClick={() => onNav("buscador")}>
+                <i className="ti ti-search" style={{ marginRight:4 }} /> Buscar otros creadores en el catálogo
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ─── CHAT INCORPORADO (Solo si no está en propuesta_pendiente ni rechazado) ─── */}
+      {camp.estado !== "propuesta_pendiente" && camp.estado !== "rechazado" && (
         <div className="chat-box" style={{ height:"380px" }}>
           <div className="chat-header">
             <div style={{ display:"flex", alignItems:"center", gap:8 }}>
@@ -3367,7 +3404,7 @@ function AdminDashboard({ user, campañas, onUpdateCampaña, onNav, influencersL
 
   // Métricas financieras calculadas para Super Admin
   const totalEnCustodia = campañas
-    .filter(c => c.estado !== "finalizado" && c.estado !== "cancelado_fraude" && c.estado !== "reembolso_total")
+    .filter(c => c.estado !== "finalizado" && c.estado !== "cancelado_fraude" && c.estado !== "reembolso_total" && c.estado !== "rechazado")
     .reduce((acc, c) => acc + (c.monto || 0), 0);
 
   const comisionIoSono = totalEnCustodia * 0.15;
