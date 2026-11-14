@@ -145,11 +145,13 @@ const RESTRICTIONS_PRESET = [
 ];
 
 const DEFAULT_SERVICES = [
-  { id:"s1", name:"Historia (1 story de 24h)", price:"USD 35", rawPrice:35, icon:"ti-clock", desc:"Story vertical de 24h con mención y sticker de enlace directo.", plazo:"24hs" },
-  { id:"s2", name:"Combo 3 Historias consecutivas", price:"USD 80", rawPrice:80, icon:"ti-stack-2", desc:"Secuencia narrativa de 3 stories mostrando el producto en uso.", plazo:"48hs" },
-  { id:"s3", name:"Reel hasta 30 seg.", price:"USD 120", rawPrice:120, icon:"ti-player-play", desc:"Video vertical 9:16 editado con audio en tendencia y foco de marca.", plazo:"72hs" },
-  { id:"s4", name:"Reel hasta 60 seg.", price:"USD 170", rawPrice:170, icon:"ti-video", desc:"Review o unboxing en profundidad con tomas macro y primeros planos.", plazo:"72hs" },
-  { id:"s5", name:"Publicación Feed (Post fijo)", price:"USD 90", rawPrice:90, icon:"ti-photo", desc:"Carrusel fotográfico permanente de alta calidad en el feed.", plazo:"48hs" }
+  { id:"s1", name:"Historia Instagram (24h)", price:"USD 35", rawPrice:35, icon:"ti-clock", desc:"Story vertical de 24h con mención y sticker de enlace directo.", plazo:"24hs" },
+  { id:"s2", name:"Combo 3 Historias Instagram", price:"USD 80", rawPrice:80, icon:"ti-stack-2", desc:"Secuencia narrativa de 3 stories mostrando el producto en uso.", plazo:"48hs" },
+  { id:"s3", name:"Reel Instagram (hasta 30 seg)", price:"USD 120", rawPrice:120, icon:"ti-brand-instagram", desc:"Video vertical 9:16 editado con audio en tendencia y foco de marca.", plazo:"72hs" },
+  { id:"s4", name:"Video TikTok dedicado (hasta 60 seg)", price:"USD 140", rawPrice:140, icon:"ti-brand-tiktok", desc:"Contenido nativo de TikTok con gancho en los primeros 3 segundos.", plazo:"72hs" },
+  { id:"s5", name:"Post / Video Facebook", price:"USD 75", rawPrice:75, icon:"ti-brand-facebook", desc:"Publicación de alto alcance en página verificada de Facebook.", plazo:"48hs" },
+  { id:"s6", name:"YouTube Short / Video", price:"USD 110", rawPrice:110, icon:"ti-brand-youtube", desc:"Short dinámico vertical con enlace destacado en descripción.", plazo:"72hs" },
+  { id:"s7", name:"Combo Multiplataforma (Reel + TikTok)", price:"USD 210", rawPrice:210, icon:"ti-layers-intersect", desc:"Doble impacto: contenido optimizado para audiencias de Instagram y TikTok.", plazo:"72hs" }
 ];
 
 const NICHOS_CATEGORIAS = [
@@ -170,6 +172,66 @@ const INITIAL_INFLUENCERS = [
     name: "Daniel Monaldi",
     handle: "@danielmonaldii",
     tiktok: "@danielmonaldi_ok",
+    facebook: "Daniel Monaldi Moda",
+    youtube: "Daniel Monaldi TV",
+    redes: {
+      instagram: { handle: "@danielmonaldii", followers: "85.4K", url: "https://instagram.com/danielmonaldii" },
+      tiktok: { handle: "@danielmonaldi_ok", followers: "142.6K", url: "https://tiktok.com/@danielmonaldi_ok" },
+      facebook: { handle: "Daniel Monaldi Moda", followers: "24.1K", url: "https://facebook.com" },
+      youtube: { handle: "Daniel Monaldi TV", followers: "31.5K", url: "https://youtube.com" }
+    },
+    video_presentacion: {
+      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+      titulo: "Pitch Oficial a Marcas (45 seg)",
+      descripcion: "Mirá cómo comunico a cámara: tono fresco, estilismo cuidado, dicción y enfoque en conversión para tu marca."
+    },
+    virales_redes: {
+      tiktok: {
+        title: "5 Outfits Urbanos para Invierno",
+        reach: "428.5K vistas",
+        likes: "38.2K likes",
+        shares: "2.4K compartidos",
+        videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4"
+      },
+      instagram: {
+        title: "Tendencias Streetwear en Buenos Aires",
+        reach: "182.4K vistas",
+        likes: "15.7K likes",
+        shares: "1.8K compartidos",
+        videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
+      },
+      youtube: {
+        title: "Unboxing & Review Zapatillas Edición Limitada",
+        reach: "94.6K vistas",
+        likes: "8.3K likes",
+        shares: "640 compartidos",
+        videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4"
+      },
+      facebook: {
+        title: "Guía de Estilo Clásico & Combinaciones",
+        reach: "41.2K vistas",
+        likes: "3.1K likes",
+        shares: "890 compartidos",
+        videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4"
+      }
+    },
+    metricas_audiencia: {
+      alcance_mensual: "850.000+ cuentas alcanzadas",
+      engagement_promedio: "7.9% engagement verificado",
+      genero: { hombres: 68, mujeres: 32 },
+      edades: [
+        { rango: "18-24", pct: 36 },
+        { rango: "25-34", pct: 48 },
+        { rango: "35-44", pct: 12 },
+        { rango: "45+", pct: 4 }
+      ],
+      ciudades: [
+        { ciudad: "CABA & GBA", pct: 54 },
+        { ciudad: "Córdoba", pct: 16 },
+        { ciudad: "Rosario / Santa Fe", pct: 12 },
+        { ciudad: "Otras provincias", pct: 18 }
+      ]
+    },
     niche: "Moda & Tendencias",
     followers: "85.4K",
     zone: "Buenos Aires, Argentina",
@@ -1236,7 +1298,7 @@ function Checkout({ data, onNav, user, onCampañaCreada }) {
 }
 
 // ─── GESTIÓN DE CAMPAÑAS Y CHAT INTEGRADO ─────────────────────────────────────
-function CampañasView({ user, campañas, onUpdateCampaña, onOpenRating, onNav }) {
+function CampañasView({ user, campañas, onUpdateCampaña, onOpenRating, onNav, influencers }) {
   const [selectedCampId, setSelectedCampId] = useState(campañas[0]?.id || null);
   const [draftNote, setDraftNote] = useState("");
   const [publishLink, setPublishLink] = useState("");
@@ -1691,18 +1753,28 @@ function CampañasView({ user, campañas, onUpdateCampaña, onOpenRating, onNav 
             )
           )}
 
+          {/* Acciones finales */}
           <div className="grid-2">
-            <button
-              className="btn btn-primary"
-              onClick={() => onNav("buscador")}
-            >
-              <i className="ti ti-search" style={{ marginRight:4 }} /> Contratar otra acción
-            </button>
+            {isMarca ? (
+              <button
+                className="btn btn-primary"
+                onClick={() => onNav("buscador")}
+              >
+                <i className="ti ti-search" style={{ marginRight:4 }} /> Contratar otra acción
+              </button>
+            ) : (
+              <button
+                className="btn btn-primary"
+                onClick={() => onNav("editor_perfil")}
+              >
+                <i className="ti ti-wallet" style={{ marginRight:4 }} /> Ver mis cobros y balance
+              </button>
+            )}
             <button
               className="btn btn-outline"
-              onClick={() => onNav("login")}
+              onClick={() => onNav(isMarca ? "login" : "profile", isMarca ? null : (influencers?.find(inf => inf.id === camp.influencer_id) || influencers?.[0]))}
             >
-              <i className="ti ti-user" style={{ marginRight:4 }} /> Ver perfil y métricas
+              <i className="ti ti-user" style={{ marginRight:4 }} /> {isMarca ? "Mi cuenta de marca" : "Ver mi perfil público"}
             </button>
           </div>
         </div>
@@ -1911,14 +1983,36 @@ function CampañasView({ user, campañas, onUpdateCampaña, onOpenRating, onNav 
             ))}
           </div>
 
-          <div className="chat-input-bar">
-            <input
-              className="chat-input"
-              placeholder={`Escribí un mensaje como ${isMarca ? "Marca" : "Influencer"}...`}
-              value={chatText}
-              onChange={e => setChatText(e.target.value)}
-              onKeyDown={e => {
-                if (e.key === "Enter" && chatText.trim()) {
+          {camp.estado === "finalizado" || camp.estado === "cancelado_50" || camp.estado === "cancelado_fraude" || camp.estado === "reembolso_total" ? (
+            <div style={{ padding:"12px 16px", background:"var(--bg2)", borderTop:"1px solid var(--border)", textAlign:"center", fontSize:12, color:"var(--text2)", display:"flex", alignItems:"center", justifyContent:"center", gap:6 }}>
+              <i className="ti ti-lock" style={{ color:"var(--purple-lt)" }} />
+              <span>Campaña concluida. El chat está archivado como constancia oficial de entrega y pago.</span>
+            </div>
+          ) : (
+            <div className="chat-input-bar">
+              <input
+                className="chat-input"
+                placeholder={`Escribí un mensaje como ${isMarca ? "Marca" : "Influencer"}...`}
+                value={chatText}
+                onChange={e => setChatText(e.target.value)}
+                onKeyDown={e => {
+                  if (e.key === "Enter" && chatText.trim()) {
+                    const nuevo = {
+                      id: Date.now(),
+                      sender: isMarca ? "marca" : "influencer",
+                      autor: isMarca ? camp.marca_nombre : camp.influencer_nombre,
+                      texto: chatText.trim(),
+                      time: "Recién"
+                    };
+                    updateEstado(camp.estado, { mensajes: [...(camp.mensajes || []), nuevo] });
+                    setChatText("");
+                  }
+                }}
+              />
+              <button
+                className="chat-send-btn"
+                onClick={() => {
+                  if (!chatText.trim()) return;
                   const nuevo = {
                     id: Date.now(),
                     sender: isMarca ? "marca" : "influencer",
@@ -1928,29 +2022,153 @@ function CampañasView({ user, campañas, onUpdateCampaña, onOpenRating, onNav 
                   };
                   updateEstado(camp.estado, { mensajes: [...(camp.mensajes || []), nuevo] });
                   setChatText("");
-                }
-              }}
-            />
-            <button
-              className="chat-send-btn"
-              onClick={() => {
-                if (!chatText.trim()) return;
-                const nuevo = {
-                  id: Date.now(),
-                  sender: isMarca ? "marca" : "influencer",
-                  autor: isMarca ? camp.marca_nombre : camp.influencer_nombre,
-                  texto: chatText.trim(),
-                  time: "Recién"
-                };
-                updateEstado(camp.estado, { mensajes: [...(camp.mensajes || []), nuevo] });
-                setChatText("");
-              }}
-            >
-              <i className="ti ti-send" />
-            </button>
-          </div>
+                }}
+              >
+                <i className="ti ti-send" />
+              </button>
+            </div>
+          )}
         </div>
       )}
+    </div>
+  );
+}
+
+// ─── SELECTOR Y REPRODUCTOR DE VIDEOS VIRALES POR RED ────────────────────────
+function ViralSelector({ virales = {} }) {
+  const [redActiva, setRedActiva] = useState("tiktok");
+  const actual = virales[redActiva] || virales["tiktok"] || {
+    title: "Video Destacado",
+    reach: "150K vistas",
+    likes: "12K likes",
+    shares: "1.5K compartidos",
+    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4"
+  };
+
+  const REDES_CONFIG = [
+    { id: "tiktok", label: "TikTok", icon: "ti-brand-tiktok", color: "#00f2fe" },
+    { id: "instagram", label: "Instagram Reels", icon: "ti-brand-instagram", color: "#e1306c" },
+    { id: "youtube", label: "YouTube Shorts", icon: "ti-brand-youtube", color: "#ff0000" },
+    { id: "facebook", label: "Facebook Watch", icon: "ti-brand-facebook", color: "#1877f2" }
+  ];
+
+  return (
+    <div>
+      <div style={{ display:"flex", gap:8, overflowX:"auto", paddingBottom:8, marginBottom:12 }}>
+        {REDES_CONFIG.map(r => (
+          <button
+            key={r.id}
+            onClick={() => setRedActiva(r.id)}
+            className={`pill ${redActiva === r.id ? "pill-purple" : "pill-gray"}`}
+            style={{ cursor:"pointer", display:"flex", alignItems:"center", gap:6, padding:"6px 12px", border: redActiva === r.id ? "1px solid var(--purple)" : "0.5px solid var(--border)" }}
+          >
+            <i className={`ti ${r.icon}`} style={{ color: r.color }} />
+            <span>{r.label}</span>
+          </button>
+        ))}
+      </div>
+
+      <div style={{ background:"var(--bg2)", borderRadius:"var(--radius)", padding:"14px", border:"0.5px solid var(--border)" }}>
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:10, flexWrap:"wrap", gap:6 }}>
+          <div style={{ fontSize:14, fontWeight:700 }}>{actual.title}</div>
+          <div style={{ display:"flex", gap:6, flexWrap:"wrap" }}>
+            {actual.reach && <span className="pill pill-green" style={{ fontSize:11 }}>👁️ {actual.reach}</span>}
+            {actual.likes && <span className="pill pill-purple" style={{ fontSize:11 }}>❤️ {actual.likes}</span>}
+            {actual.shares && <span className="pill pill-gray" style={{ fontSize:11 }}>↗️ {actual.shares}</span>}
+          </div>
+        </div>
+        <DraftVideoPlayer
+          videoUrl={actual.videoUrl || "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4"}
+          title={actual.title}
+        />
+      </div>
+    </div>
+  );
+}
+
+// ─── DEMOGRAFÍA Y MÉTRICAS DE AUDIENCIA AUDITADAS (MEDIA KIT) ────────────────
+function AudienceMetricsView({ metricas, redes }) {
+  const m = metricas || {
+    genero: { hombres: 68, mujeres: 32 },
+    edades: [ { rango: "18-24", pct: 36 }, { rango: "25-34", pct: 48 }, { rango: "35-44", pct: 12 }, { rango: "45+", pct: 4 } ],
+    ciudades: [ { ciudad: "CABA & GBA", pct: 54 }, { ciudad: "Córdoba", pct: 16 }, { ciudad: "Rosario / Santa Fe", pct: 12 }, { ciudad: "Otras provincias", pct: 18 } ],
+    alcance_mensual: "850.000+ cuentas alcanzadas",
+    engagement_promedio: "7.9% engagement verificado"
+  };
+
+  return (
+    <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
+      {/* Resumen de Métricas Globales */}
+      <div className="grid-2">
+        <div style={{ background:"var(--bg2)", padding:"12px 14px", borderRadius:"var(--radius)", border:"0.5px solid var(--border)" }}>
+          <div style={{ fontSize:11, color:"var(--text2)", textTransform:"uppercase", letterSpacing:"0.04em" }}>Alcance Mensual Total</div>
+          <div style={{ fontSize:18, fontWeight:700, color:"var(--green)", marginTop:4 }}>{m.alcance_mensual}</div>
+          <div style={{ fontSize:10, color:"var(--text2)", marginTop:2 }}>En todas las plataformas activas</div>
+        </div>
+        <div style={{ background:"var(--bg2)", padding:"12px 14px", borderRadius:"var(--radius)", border:"0.5px solid var(--border)" }}>
+          <div style={{ fontSize:11, color:"var(--text2)", textTransform:"uppercase", letterSpacing:"0.04em" }}>Engagement Promedio</div>
+          <div style={{ fontSize:18, fontWeight:700, color:"var(--purple-lt)", marginTop:4 }}>{m.engagement_promedio}</div>
+          <div style={{ fontSize:10, color:"var(--text2)", marginTop:2 }}>Interacción real por post / video</div>
+        </div>
+      </div>
+
+      {/* Desglose de Género */}
+      <div style={{ background:"var(--bg2)", padding:"12px 14px", borderRadius:"var(--radius)", border:"0.5px solid var(--border)" }}>
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:8 }}>
+          <span style={{ fontSize:12, fontWeight:600 }}>Distribución por Género</span>
+          <span style={{ fontSize:11, color:"var(--text2)" }}>Hombres: {m.genero.hombres}% · Mujeres: {m.genero.mujeres}%</span>
+        </div>
+        <div style={{ height:8, width:"100%", background:"rgba(255,255,255,0.08)", borderRadius:100, overflow:"hidden", display:"flex" }}>
+          <div style={{ width:`${m.genero.hombres}%`, background:"#3b82f6" }} title={`Hombres ${m.genero.hombres}%`} />
+          <div style={{ width:`${m.genero.mujeres}%`, background:"#ec4899" }} title={`Mujeres ${m.genero.mujeres}%`} />
+        </div>
+        <div style={{ display:"flex", gap:16, marginTop:8, fontSize:11 }}>
+          <span style={{ color:"#60a5fa" }}>● Hombres ({m.genero.hombres}%)</span>
+          <span style={{ color:"#f472b6" }}>● Mujeres ({m.genero.mujeres}%)</span>
+        </div>
+      </div>
+
+      {/* Rangos de Edad */}
+      <div style={{ background:"var(--bg2)", padding:"12px 14px", borderRadius:"var(--radius)", border:"0.5px solid var(--border)" }}>
+        <div style={{ fontSize:12, fontWeight:600, marginBottom:10 }}>Rango Etario de la Comunidad</div>
+        <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
+          {m.edades.map((e, idx) => (
+            <div key={idx}>
+              <div style={{ display:"flex", justifyContent:"space-between", fontSize:11, marginBottom:3 }}>
+                <span style={{ color:"var(--text2)" }}>{e.rango} años</span>
+                <span style={{ fontWeight:600 }}>{e.pct}%</span>
+              </div>
+              <div style={{ height:6, width:"100%", background:"rgba(255,255,255,0.06)", borderRadius:100, overflow:"hidden" }}>
+                <div style={{ width:`${e.pct}%`, height:"100%", background:"var(--purple-lt)", borderRadius:100 }} />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Ciudades Principales */}
+      <div style={{ background:"var(--bg2)", padding:"12px 14px", borderRadius:"var(--radius)", border:"0.5px solid var(--border)" }}>
+        <div style={{ fontSize:12, fontWeight:600, marginBottom:10 }}>Principales Ciudades y Provincias</div>
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(2, 1fr)", gap:8 }}>
+          {m.ciudades.map((c, idx) => (
+            <div key={idx} style={{ background:"var(--bg1)", padding:"8px 10px", borderRadius:"var(--radius-sm)", border:"0.5px solid var(--border)" }}>
+              <div style={{ fontSize:11, color:"var(--text2)" }}>{c.ciudad}</div>
+              <div style={{ fontSize:14, fontWeight:700, color:"var(--text)", marginTop:2 }}>{c.pct}%</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Capturas de Analytics Verificadas */}
+      <div style={{ background:"rgba(34,197,94,0.08)", border:"1px solid rgba(34,197,94,0.25)", padding:"12px 14px", borderRadius:"var(--radius)" }}>
+        <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:4 }}>
+          <i className="ti ti-certificate" style={{ color:"var(--green)", fontSize:18 }} />
+          <span style={{ fontSize:12, fontWeight:700, color:"var(--green)" }}>Capturas de Pantalla Verificadas por Io Sono</span>
+        </div>
+        <div style={{ fontSize:11, color:"var(--text2)", lineHeight:1.5 }}>
+          Las estadísticas de Meta Insights y TikTok Analytics fueron contrastadas con capturas oficiales subidas por el creador y auditadas por el equipo de moderación.
+        </div>
+      </div>
     </div>
   );
 }
@@ -2001,8 +2219,24 @@ function Profile({ inf, onBack, onNav, user }) {
                   </span>
                 )}
               </div>
-              <div style={{ fontSize:13, color:"var(--text2)", marginBottom:8 }}>
-                {inf.handle} · Instagram {inf.tiktok ? `· ${inf.tiktok} TikTok` : ""}
+              {/* Redes Sociales Verificadas */}
+              <div style={{ display:"flex", flexWrap:"wrap", gap:6, margin:"6px 0 10px" }}>
+                <span className="pill pill-purple" style={{ fontSize:11, display:"inline-flex", alignItems:"center", gap:5, background:"rgba(225,48,108,0.15)", border:"1px solid rgba(225,48,108,0.3)" }}>
+                  <i className="ti ti-brand-instagram" style={{ color:"#e1306c" }} />
+                  {inf.redes?.instagram?.handle || inf.handle} · {inf.redes?.instagram?.followers || inf.followers}
+                </span>
+                <span className="pill pill-purple" style={{ fontSize:11, display:"inline-flex", alignItems:"center", gap:5, background:"rgba(0,242,254,0.12)", border:"1px solid rgba(0,242,254,0.3)" }}>
+                  <i className="ti ti-brand-tiktok" style={{ color:"#00f2fe" }} />
+                  {inf.redes?.tiktok?.handle || inf.tiktok || "@tiktok"} · {inf.redes?.tiktok?.followers || "142K"}
+                </span>
+                <span className="pill pill-purple" style={{ fontSize:11, display:"inline-flex", alignItems:"center", gap:5, background:"rgba(24,119,242,0.15)", border:"1px solid rgba(24,119,242,0.3)" }}>
+                  <i className="ti ti-brand-facebook" style={{ color:"#1877f2" }} />
+                  {inf.redes?.facebook?.handle || inf.facebook || "Facebook"} · {inf.redes?.facebook?.followers || "24K"}
+                </span>
+                <span className="pill pill-purple" style={{ fontSize:11, display:"inline-flex", alignItems:"center", gap:5, background:"rgba(255,0,0,0.12)", border:"1px solid rgba(255,0,0,0.3)" }}>
+                  <i className="ti ti-brand-youtube" style={{ color:"#ff0000" }} />
+                  {inf.redes?.youtube?.handle || inf.youtube || "YouTube"} · {inf.redes?.youtube?.followers || "31K"}
+                </span>
               </div>
               {inf.bio && <div style={{ fontSize:12, color:"var(--text2)", marginBottom:12, lineHeight:1.5 }}>{inf.bio}</div>}
               <div style={{ display:"flex", flexWrap:"wrap", gap:6 }}>
@@ -2037,11 +2271,11 @@ function Profile({ inf, onBack, onNav, user }) {
       </div>
 
       <div className="toggle-bar">
-        {["servicios", "condiciones", "portfolio", "resenas"].map(t => (
+        {["servicios", "material", "condiciones", "resenas"].map(t => (
           <button key={t} className={`toggle-btn ${tab===t?"active":""}`} onClick={() => setTab(t)}>
             {t === "servicios" ? "Catálogo y Tarifas" :
-             t === "condiciones" ? "Condiciones del Creador" :
-             t === "portfolio" ? `Portfolio (${inf.portfolio?.length || 2})` : "Reseñas (10/10)"}
+             t === "material" ? "🎬 Material & Métricas" :
+             t === "condiciones" ? "Condiciones del Creador" : "Reseñas (10/10)"}
           </button>
         ))}
       </div>
@@ -2068,15 +2302,76 @@ function Profile({ inf, onBack, onNav, user }) {
               </div>
               <div style={{ display:"flex", alignItems:"center", gap:12, flexShrink:0 }}>
                 <span style={{ fontSize:14, fontWeight:700, color:"var(--text)" }}>{s.price}</span>
-                <button
-                  className="btn btn-primary btn-sm"
-                  onClick={() => onNav("hire", { inf, service:s })}
-                >
-                  Contratar ↗
-                </button>
+                {esMiPerfil ? (
+                  <button
+                    className="btn btn-outline btn-sm"
+                    style={{ borderColor:"var(--purple)", color:"var(--purple-lt)" }}
+                    onClick={() => onNav("editor_perfil")}
+                  >
+                    ✏️ Editar tarifa
+                  </button>
+                ) : user?.role === "influencer" ? (
+                  <span className="pill pill-gray" style={{ fontSize:10 }}>
+                    Tarifa para marcas: {s.price}
+                  </span>
+                ) : (
+                  <button
+                    className="btn btn-primary btn-sm"
+                    onClick={() => onNav("hire", { inf, service:s })}
+                  >
+                    Contratar ↗
+                  </button>
+                )}
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {tab === "material" && (
+        <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
+          {/* 1. Video Presentación a Marcas */}
+          <div className="card" style={{ borderLeft:"4px solid var(--purple)" }}>
+            <div className="card-title">
+              <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+                <i className="ti ti-video" style={{ color:"var(--purple-lt)", fontSize:20 }} />
+                <span>Video de Presentación a Marcas</span>
+              </div>
+              <span className="pill pill-purple" style={{ fontSize:10 }}>🎤 Pitch Oficial · 45 seg</span>
+            </div>
+            <div style={{ fontSize:12, color:"var(--text2)", marginBottom:12, lineHeight:1.5 }}>
+              {inf.video_presentacion?.descripcion || "Mirá a cámara cómo comunica, su dicción, estética y cómo presenta productos a su comunidad antes de contratar:"}
+            </div>
+            <DraftVideoPlayer
+              videoUrl={inf.video_presentacion?.videoUrl || "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"}
+              title={inf.video_presentacion?.titulo || `Presentación de ${inf.name}`}
+              nota="Video grabado directamente por el creador para Io Sono"
+            />
+          </div>
+
+          {/* 2. Video más viral por Red Social */}
+          <div className="card">
+            <div className="card-title">
+              <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+                <i className="ti ti-flame" style={{ color:"var(--amber)", fontSize:20 }} />
+                <span>Video más viral por red social</span>
+              </div>
+              <span style={{ fontSize:10, color:"var(--text2)" }}>Métricas orgánicas verificadas</span>
+            </div>
+            <ViralSelector virales={inf.virales_redes} />
+          </div>
+
+          {/* 3. Métricas y Estadísticas de Audiencia (Media Kit) */}
+          <div className="card">
+            <div className="card-title">
+              <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+                <i className="ti ti-chart-bar" style={{ color:"var(--green)", fontSize:20 }} />
+                <span>Media Kit y Demografía de Audiencia</span>
+              </div>
+              <span className="pill pill-green" style={{ fontSize:10 }}>✓ Auditado por Io Sono</span>
+            </div>
+            <AudienceMetricsView metricas={inf.metricas_audiencia} redes={inf.redes} />
+          </div>
         </div>
       )}
 
@@ -2495,10 +2790,14 @@ function Buscador({ onNav, user, onSelectInfluencer, influencersList = [] }) {
 function CreatorProfileEditor({ influencer, onSave, onPreview, onNav }) {
   const currentInf = influencer || INITIAL_INFLUENCERS[0];
 
-  // Estado de Datos Personales
+  // Estado de Datos Personales y Redes Múltiples
   const [nombre, setNombre] = useState(currentInf.name || "");
   const [handle, setHandle] = useState(currentInf.handle || "");
-  const [tiktok, setTiktok] = useState(currentInf.tiktok || "");
+  const [tiktok, setTiktok] = useState(currentInf.tiktok || currentInf.redes?.tiktok?.handle || "");
+  const [facebook, setFacebook] = useState(currentInf.facebook || currentInf.redes?.facebook?.handle || "");
+  const [youtube, setYoutube] = useState(currentInf.youtube || currentInf.redes?.youtube?.handle || "");
+  const [videoPresUrl, setVideoPresUrl] = useState(currentInf.video_presentacion?.videoUrl || "");
+  const [videoPresDesc, setVideoPresDesc] = useState(currentInf.video_presentacion?.descripcion || "");
   const [niche, setNiche] = useState(currentInf.niche || "Moda & Tendencias");
   const [zone, setZone] = useState(currentInf.zone || "Buenos Aires, Argentina");
   const [responseTime, setResponseTime] = useState(currentInf.responseTime || "< 2 horas");
@@ -2731,6 +3030,21 @@ function CreatorProfileEditor({ influencer, onSave, onPreview, onNav }) {
     name: nombre,
     handle: handle,
     tiktok: tiktok,
+    facebook: facebook,
+    youtube: youtube,
+    redes: {
+      instagram: { handle: handle, followers: currentInf.redes?.instagram?.followers || currentInf.followers },
+      tiktok: { handle: tiktok, followers: currentInf.redes?.tiktok?.followers || "142K" },
+      facebook: { handle: facebook, followers: currentInf.redes?.facebook?.followers || "24K" },
+      youtube: { handle: youtube, followers: currentInf.redes?.youtube?.followers || "31K" }
+    },
+    video_presentacion: {
+      videoUrl: videoPresUrl || currentInf.video_presentacion?.videoUrl || "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+      titulo: "Pitch Oficial a Marcas",
+      descripcion: videoPresDesc || "Mirá cómo comunico a cámara: tono fresco, estilismo cuidado, dicción y enfoque en conversión para tu marca."
+    },
+    virales_redes: currentInf.virales_redes,
+    metricas_audiencia: currentInf.metricas_audiencia,
     niche: niche,
     zone: zone,
     responseTime: responseTime,
@@ -2852,11 +3166,23 @@ function CreatorProfileEditor({ influencer, onSave, onPreview, onNav }) {
             </div>
           </div>
 
+          {/* Redes Multi-plataforma */}
           <div className="grid-3" style={{ marginTop:10 }}>
             <div className="field">
-              <label>Usuario de TikTok (opcional):</label>
-              <input value={tiktok} onChange={e => setTiktok(e.target.value)} placeholder="@daniel_tiktok" />
+              <label>Usuario de TikTok:</label>
+              <input value={tiktok} onChange={e => setTiktok(e.target.value)} placeholder="@danielmonaldi_ok" />
             </div>
+            <div className="field">
+              <label>Página de Facebook:</label>
+              <input value={facebook} onChange={e => setFacebook(e.target.value)} placeholder="Daniel Monaldi Moda" />
+            </div>
+            <div className="field">
+              <label>Canal de YouTube:</label>
+              <input value={youtube} onChange={e => setYoutube(e.target.value)} placeholder="Daniel Monaldi TV" />
+            </div>
+          </div>
+
+          <div className="grid-2" style={{ marginTop:10 }}>
             <div className="field">
               <label>Nicho principal:</label>
               <select value={niche} onChange={e => setNiche(e.target.value)}>
@@ -2871,6 +3197,32 @@ function CreatorProfileEditor({ influencer, onSave, onPreview, onNav }) {
             <div className="field">
               <label>Ciudad y País:</label>
               <input value={zone} onChange={e => setZone(e.target.value)} placeholder="Buenos Aires, Argentina" />
+            </div>
+          </div>
+
+          {/* Video de Presentación a Marcas */}
+          <div style={{ marginTop:14, background:"var(--bg2)", padding:"14px", borderRadius:"var(--radius)", border:"1px solid var(--purple)" }}>
+            <div style={{ fontSize:13, fontWeight:600, color:"var(--purple-lt)", marginBottom:4, display:"flex", alignItems:"center", gap:6 }}>
+              <i className="ti ti-video" /> Video de Presentación / Pitch a Marcas (45 seg)
+            </div>
+            <div style={{ fontSize:11, color:"var(--text2)", marginBottom:10 }}>
+              Pegá el link a tu video vertical donde te presentás a las marcas para que vean tu tono, carisma y estética antes de contratarte.
+            </div>
+            <div className="field">
+              <label>URL directa del video de presentación (MP4 o link público):</label>
+              <input
+                value={videoPresUrl}
+                onChange={e => setVideoPresUrl(e.target.value)}
+                placeholder="https://.../presentacion.mp4"
+              />
+            </div>
+            <div className="field" style={{ marginTop:8 }}>
+              <label>Texto breve descriptivo para las marcas:</label>
+              <input
+                value={videoPresDesc}
+                onChange={e => setVideoPresDesc(e.target.value)}
+                placeholder="Ej: Te cuento cómo trabajo con las marcas, mi estética y tiempos de entrega."
+              />
             </div>
           </div>
 
@@ -4557,6 +4909,7 @@ export default function IoSono() {
             onUpdateCampaña={handleUpdateCampaña}
             onOpenRating={(camp) => setRatingModalCamp(camp)}
             onNav={nav}
+            influencers={influencers}
           />
         )}
         {screen === "admin" && (
