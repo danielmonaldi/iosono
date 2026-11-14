@@ -1298,7 +1298,7 @@ function Checkout({ data, onNav, user, onCampañaCreada }) {
 }
 
 // ─── GESTIÓN DE CAMPAÑAS Y CHAT INTEGRADO ─────────────────────────────────────
-function CampañasView({ user, campañas, onUpdateCampaña, onOpenRating, onNav, influencers }) {
+function CampañasView({ user, campañas, onUpdateCampaña, onOpenRating, onNav, influencers, onSwitchRole }) {
   const [selectedCampId, setSelectedCampId] = useState(campañas[0]?.id || null);
   const [draftNote, setDraftNote] = useState("");
   const [publishLink, setPublishLink] = useState("");
@@ -1319,40 +1319,127 @@ function CampañasView({ user, campañas, onUpdateCampaña, onOpenRating, onNav,
     onUpdateCampaña(updated);
   };
 
-  if (!camp) {
-    return (
-      <div className="card" style={{ textAlign:"center", padding:"40px 16px", marginTop:20 }}>
-        <i className="ti ti-briefcase" style={{ fontSize:36, color:"var(--purple-lt)", display:"block", marginBottom:10 }} />
-        <div style={{ fontSize:16, fontWeight:600, marginBottom:4 }}>No tenés campañas activas</div>
-        <div style={{ fontSize:13, color:"var(--text2)", marginBottom:18 }}>
-          {isMarca ? "Buscá un influencer para iniciar tu primera contratación segura." : "Tus propuestas de marcas aparecerán acá."}
-        </div>
-        {isMarca && (
-          <button className="btn btn-primary btn-sm" onClick={() => onNav("buscador")}>
-            <i className="ti ti-search" style={{ marginRight:4 }} /> Explorar influencers
-          </button>
-        )}
-      </div>
-    );
-  }
-
   return (
     <div style={{ paddingTop:8 }}>
-      {/* Selector de Campaña si tiene varias */}
-      {campañas.length > 1 && (
-        <div style={{ display:"flex", gap:8, overflowX:"auto", paddingBottom:10, marginBottom:10 }}>
-          {campañas.map(c => (
-            <button
-              key={c.id}
-              onClick={() => setSelectedCampId(c.id)}
-              className={`pill ${camp?.id===c.id?"pill-purple":"pill-gray"}`}
-              style={{ cursor:"pointer", whiteSpace:"nowrap" }}
-            >
-              {isMarca ? c.influencer_nombre : c.marca_nombre} · {c.servicio_nombre}
-            </button>
-          ))}
+      {/* ─── PESTAÑAS PRINCIPALES DE ROL: MARCA VS INFLUENCER ─── */}
+      <div style={{
+        display: "grid",
+        gridTemplateColumns: "1fr 1fr",
+        gap: 8,
+        background: "rgba(23,21,32,0.95)",
+        padding: "6px",
+        borderRadius: "14px",
+        border: "1.5px solid var(--border)",
+        marginBottom: "14px",
+        boxShadow: "0 6px 20px rgba(0,0,0,0.4)"
+      }}>
+        <button
+          type="button"
+          onClick={() => onSwitchRole?.("marca")}
+          style={{
+            padding: "12px 14px",
+            borderRadius: "10px",
+            border: isMarca ? "1.5px solid rgba(139,92,246,0.6)" : "none",
+            cursor: "pointer",
+            fontWeight: 800,
+            fontSize: "13px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "8px",
+            background: isMarca ? "linear-gradient(135deg, #7c3aed, #5b21b6)" : "transparent",
+            color: isMarca ? "#fff" : "var(--text2)",
+            boxShadow: isMarca ? "0 4px 16px rgba(124,58,237,0.5)" : "none",
+            transition: "all 0.2s"
+          }}
+        >
+          <i className="ti ti-building" style={{ fontSize: 18 }} />
+          <span>🏢 Pestaña MARCA</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => onSwitchRole?.("influencer")}
+          style={{
+            padding: "12px 14px",
+            borderRadius: "10px",
+            border: !isMarca ? "1.5px solid rgba(34,197,94,0.6)" : "none",
+            cursor: "pointer",
+            fontWeight: 800,
+            fontSize: "13px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "8px",
+            background: !isMarca ? "linear-gradient(135deg, #10b981, #047857)" : "transparent",
+            color: !isMarca ? "#fff" : "var(--text2)",
+            boxShadow: !isMarca ? "0 4px 16px rgba(16,185,129,0.5)" : "none",
+            transition: "all 0.2s"
+          }}
+        >
+          <i className="ti ti-sparkles" style={{ fontSize: 18 }} />
+          <span>✨ Pestaña INFLUENCER</span>
+        </button>
+      </div>
+
+      {/* Cartel informativo de en qué pestaña estás */}
+      <div style={{
+        background: isMarca ? "rgba(124,58,237,0.15)" : "rgba(16,185,129,0.15)",
+        border: `1.5px solid ${isMarca ? "rgba(124,58,237,0.4)" : "rgba(16,185,129,0.4)"}`,
+        borderRadius: "var(--radius-sm)",
+        padding: "10px 14px",
+        marginBottom: "14px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        gap: 10,
+        fontSize: "12px"
+      }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <i className={`ti ${isMarca ? "ti-building" : "ti-user-check"}`} style={{ color: isMarca ? "var(--purple-lt)" : "var(--green)", fontSize: 20 }} />
+          <span>
+            {isMarca ? (
+              <>Estás en la <strong>Pestaña MARCA</strong>: Revisá el video HD entregado, solicitá ajustes o aprobá para liberar el pago.</>
+            ) : (
+              <>Estás en la <strong>Pestaña INFLUENCER (Daniel Monaldi)</strong>: Aceptá propuestas con dinero retenido en Escrow y subí borradores.</>
+            )}
+          </span>
         </div>
-      )}
+        <span className={`pill ${isMarca ? "pill-purple" : "pill-green"}`} style={{ fontSize: 11, fontWeight: 700, flexShrink: 0 }}>
+          {isMarca ? "Rol: Marca" : "Rol: Influencer"}
+        </span>
+      </div>
+
+      {!camp ? (
+        <div className="card" style={{ textAlign:"center", padding:"40px 16px", marginTop:10 }}>
+          <i className="ti ti-briefcase" style={{ fontSize:36, color:"var(--purple-lt)", display:"block", marginBottom:10 }} />
+          <div style={{ fontSize:16, fontWeight:600, marginBottom:4 }}>No tenés campañas activas en este rol</div>
+          <div style={{ fontSize:13, color:"var(--text2)", marginBottom:18 }}>
+            {isMarca ? "Buscá un influencer para iniciar tu primera contratación segura." : "Tus propuestas de marcas aparecerán acá."}
+          </div>
+          {isMarca && (
+            <button className="btn btn-primary btn-sm" onClick={() => onNav("buscador")}>
+              <i className="ti ti-search" style={{ marginRight:4 }} /> Explorar influencers
+            </button>
+          )}
+        </div>
+      ) : (
+        <div>
+          {/* Selector de Campaña si tiene varias */}
+          {campañas.length > 1 && (
+            <div style={{ display:"flex", gap:8, overflowX:"auto", paddingBottom:10, marginBottom:10 }}>
+              {campañas.map(c => (
+                <button
+                  key={c.id}
+                  onClick={() => setSelectedCampId(c.id)}
+                  className={`pill ${camp?.id===c.id?"pill-purple":"pill-gray"}`}
+                  style={{ cursor:"pointer", whiteSpace:"nowrap" }}
+                >
+                  {isMarca ? c.influencer_nombre : c.marca_nombre} · {c.servicio_nombre}
+                </button>
+              ))}
+            </div>
+          )}
 
       {/* Tarjeta Fija de Reglas y Resumen de Campaña */}
       <div className="card" style={{ marginBottom:10, borderLeft:"4px solid var(--purple)" }}>
@@ -2028,6 +2115,8 @@ function CampañasView({ user, campañas, onUpdateCampaña, onOpenRating, onNav,
               </button>
             </div>
           )}
+        </div>
+      )}
         </div>
       )}
     </div>
@@ -4840,11 +4929,24 @@ export default function IoSono() {
 
   const reclamosPendientes = campañas.filter(c => c.estado === "cancelacion_en_revision" || c.estado === "disputa").length;
 
-  const NAV_ITEMS = [
-    { id:"buscador", icon:"ti-search", label:"Explorar" },
-    { id:"campanas", icon:"ti-briefcase", label:"Campañas" },
+  const handleSwitchRole = (nuevoRol) => {
+    if (nuevoRol === "marca") {
+      setUser({ id:"marca_demo", role:"marca", name:"Daniel (Marca)", email:"marca@demo.com" });
+    } else if (nuevoRol === "influencer") {
+      setUser({ id:"1cf561b6-44c3-4eb6-b55b-1b9499f5027c", role:"influencer", name:"Daniel Monaldi", email:"danielmonaldi@gmail.com" });
+    }
+  };
+
+  const NAV_ITEMS = user?.role === "influencer" ? [
+    { id:"campanas", icon:"ti-briefcase", label:"Mis Propuestas", badge: campañas.filter(c => c.estado === "propuesta_pendiente").length },
+    { id:"editor_perfil", icon:"ti-user", label:"Mi Media Kit" },
+    { id:"buscador", icon:"ti-users", label:"Explorar" },
+    { id:"admin",    icon:"ti-shield-lock", label:"Admin", badge: reclamosPendientes }
+  ] : [
+    { id:"buscador", icon:"ti-search", label:"Explorar Creadores" },
+    { id:"campanas", icon:"ti-briefcase", label:"Mis Campañas" },
     { id:"admin",    icon:"ti-shield-lock", label:"Admin", badge: reclamosPendientes },
-    { id: user?.role === "influencer" ? "editor_perfil" : "login", icon:"ti-user", label: user?.role === "influencer" ? "Mi Perfil" : user ? "Cuenta" : "Ingresar" }
+    { id:"login",    icon:"ti-building", label:"Mi Empresa" }
   ];
 
   return (
@@ -4852,36 +4954,78 @@ export default function IoSono() {
       <style>{styles}</style>
       <div className="app">
         {/* Barra superior con selector de rol para probar */}
-        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"12px 0 6px", borderBottom:"0.5px solid var(--border2)", marginBottom:10 }}>
-          <div style={{ fontFamily:"var(--font-display)", fontSize:20, fontWeight:600, cursor:"pointer" }} onClick={() => nav("buscador")}>
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"12px 0 8px", borderBottom:"0.5px solid var(--border2)", marginBottom:10 }}>
+          <div style={{ fontFamily:"var(--font-display)", fontSize:22, fontWeight:700, cursor:"pointer" }} onClick={() => nav("buscador")}>
             <span style={{ color:"var(--purple-lt)", fontStyle:"italic" }}>Io</span> Sono
           </div>
-          <div style={{ display:"flex", gap:6, alignItems:"center", flexWrap:"wrap" }}>
-            <span style={{ fontSize:11, color:"var(--text2)" }}>Vista:</span>
-            <button
-              className={`pill ${user?.role==="marca"?"pill-purple":"pill-gray"}`}
-              style={{ cursor:"pointer", border:"none" }}
-              onClick={() => { setUser({ id:"marca_demo", role:"marca", name:"Daniel (Marca)", email:"marca@demo.com" }); }}
-            >
-              Marca
-            </button>
-            <button
-              className={`pill ${user?.role==="influencer"?"pill-green":"pill-gray"}`}
-              style={{ cursor:"pointer", border:"none" }}
-              onClick={() => {
-                setUser({ id:"1cf561b6-44c3-4eb6-b55b-1b9499f5027c", role:"influencer", name:"Daniel Monaldi", email:"danielmonaldi@gmail.com" });
-              }}
-            >
-              Influencer
-            </button>
-            <button
-              className={`pill ${screen==="admin"?"pill-purple":"pill-gray"}`}
-              style={{ cursor:"pointer", border:"none", background: screen==="admin"?"var(--purple)":"var(--bg2)", color: screen==="admin"?"#fff":"var(--purple-lt)" }}
-              onClick={() => { setUser({ id:"admin", role:"admin", name:"Daniel Monaldi", email:"danielmonaldi@gmail.com" }); nav("admin"); }}
-            >
-              👑 Admin {reclamosPendientes > 0 ? `(${reclamosPendientes})` : ""}
-            </button>
-          </div>
+          <button
+            className={`pill ${screen==="admin"?"pill-purple":"pill-gray"}`}
+            style={{ cursor:"pointer", border:"none", background: screen==="admin"?"var(--purple)":"var(--bg2)", color: screen==="admin"?"#fff":"var(--purple-lt)", fontSize:11, padding:"5px 10px" }}
+            onClick={() => { setUser({ id:"admin", role:"admin", name:"Daniel Monaldi", email:"danielmonaldi@gmail.com" }); nav("admin"); }}
+          >
+            👑 Panel Admin {reclamosPendientes > 0 ? `(${reclamosPendientes})` : ""}
+          </button>
+        </div>
+
+        {/* ─── PESTAÑAS PRINCIPALES PERMANENTES: MODO MARCA VS MODO INFLUENCER ─── */}
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr",
+          gap: 8,
+          background: "rgba(23,21,32,0.95)",
+          padding: "6px",
+          borderRadius: "14px",
+          border: "1.5px solid var(--border)",
+          marginBottom: "10px",
+          boxShadow: "0 6px 20px rgba(0,0,0,0.35)"
+        }}>
+          <button
+            type="button"
+            onClick={() => handleSwitchRole("marca")}
+            style={{
+              padding: "11px 12px",
+              borderRadius: "10px",
+              border: user?.role === "marca" ? "1.5px solid rgba(139,92,246,0.6)" : "none",
+              cursor: "pointer",
+              fontWeight: 800,
+              fontSize: "13px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "8px",
+              background: user?.role === "marca" ? "linear-gradient(135deg, #7c3aed, #5b21b6)" : "transparent",
+              color: user?.role === "marca" ? "#fff" : "var(--text2)",
+              boxShadow: user?.role === "marca" ? "0 4px 14px rgba(124,58,237,0.5)" : "none",
+              transition: "all 0.2s"
+            }}
+          >
+            <i className="ti ti-building" style={{ fontSize: 18 }} />
+            <span>🏢 Soy MARCA</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => handleSwitchRole("influencer")}
+            style={{
+              padding: "11px 12px",
+              borderRadius: "10px",
+              border: user?.role === "influencer" ? "1.5px solid rgba(34,197,94,0.6)" : "none",
+              cursor: "pointer",
+              fontWeight: 800,
+              fontSize: "13px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "8px",
+              background: user?.role === "influencer" ? "linear-gradient(135deg, #10b981, #047857)" : "transparent",
+              color: user?.role === "influencer" ? "#fff" : "var(--text2)",
+              boxShadow: user?.role === "influencer" ? "0 4px 14px rgba(16,185,129,0.5)" : "none",
+              transition: "all 0.2s"
+            }}
+          >
+            <i className="ti ti-sparkles" style={{ fontSize: 18 }} />
+            <span>✨ Soy INFLUENCER</span>
+          </button>
         </div>
 
         {/* Pantallas */}
@@ -4910,6 +5054,7 @@ export default function IoSono() {
             onOpenRating={(camp) => setRatingModalCamp(camp)}
             onNav={nav}
             influencers={influencers}
+            onSwitchRole={handleSwitchRole}
           />
         )}
         {screen === "admin" && (
