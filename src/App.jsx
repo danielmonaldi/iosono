@@ -4,7 +4,7 @@ import { supabase } from "./supabase";
 // Credenciales Maestras Exclusivas de Daniel Monaldi
 const MASTER_USERNAME = "danielmonaldi";
 const MASTER_PASSWORD = "genova";
-const MASTER_2FA_SECRET = "IOSONODANIEL2026"; // Clave Base32 permanente para Google Authenticator
+const MASTER_2FA_SECRET = "IOSONODANIELKEYS"; // Clave Base32 permanente (solo letras A-Z estándar RFC 4648)
 
 // Credenciales oficiales de Mercado Pago de Daniel Monaldi (Io Sono)
 const MP_PUBLIC_KEY = "APP_USR-38be8ac3-fded-4fac-a1c5-fd912aabb3fd";
