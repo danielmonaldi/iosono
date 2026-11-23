@@ -757,6 +757,96 @@ function CountdownTimerReal({ publicadoAt, onExpire, onSimularExpiracion }) {
   );
 }
 
+// ─── MODAL DE TÉRMINOS Y CONDICIONES LEGALES & GARANTÍA ESCROW ───────────────
+function TerminosModal({ onClose }) {
+  return (
+    <div className="modal-overlay" style={{ zIndex: 10000 }}>
+      <div className="modal-card" style={{ maxWidth: 640, maxHeight: "85vh", overflowY: "auto", padding: 24, textAlign: "left" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16, borderBottom: "1px solid var(--border)", paddingBottom: 12 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <i className="ti ti-scale" style={{ color: "var(--purple-lt)", fontSize: 24 }} />
+            <div>
+              <div style={{ fontSize: 16, fontWeight: 700 }}>Términos y Condiciones Legales</div>
+              <div style={{ fontSize: 11, color: "var(--text2)" }}>Garantía Escrow, Retención y Políticas de Io Sono</div>
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            style={{ background: "transparent", border: "none", color: "var(--text2)", fontSize: 20, cursor: "pointer" }}
+          >
+            ✕
+          </button>
+        </div>
+
+        <div style={{ fontSize: 12, color: "var(--text)", lineHeight: 1.6, display: "flex", flexDirection: "column", gap: 14 }}>
+          <div style={{ background: "var(--bg2)", padding: "10px 12px", borderRadius: "var(--radius-sm)", borderLeft: "3.5px solid var(--purple)" }}>
+            <strong>Resumen Ejecutivo:</strong> Io Sono opera bajo un sistema de <strong>Custodia Preventiva Escrow</strong> a través de Mercado Pago. La Marca deposita los fondos por adelantado, pero el dinero queda inmovilizado sin entregarse al Creador hasta que el borrador sea aprobado y publicado con un período de verificación de 36 horas.
+          </div>
+
+          <div>
+            <div style={{ fontWeight: 700, fontSize: 13, color: "var(--purple-lt)", marginBottom: 4 }}>1. Partes y Objeto del Servicio</div>
+            <p style={{ margin: 0, color: "var(--text2)" }}>
+              La plataforma <strong>Io Sono</strong> conecta a <strong>Marcas</strong> (empresas o personas que contratan publicidad) con <strong>Creadores de Contenido / Influencers</strong> (quienes producen y publican material en sus redes sociales: Instagram, TikTok, Facebook o YouTube). Io Sono actúa como intermediario tecnológico, custodio fiduciario de los fondos y árbitro de mediación.
+            </p>
+          </div>
+
+          <div>
+            <div style={{ fontWeight: 700, fontSize: 13, color: "var(--purple-lt)", marginBottom: 4 }}>2. Mecánica de Custodia Escrow y Split de Pagos</div>
+            <ul style={{ margin: "4px 0 0 16px", padding: 0, color: "var(--text2)" }}>
+              <li><strong>Retención 100% segura:</strong> El monto total acordado se retiene en la cuenta recaudadora de Mercado Pago de Io Sono al momento de la contratación.</li>
+              <li><strong>División pactada (Split):</strong> El 85% del monto neto corresponde a los honorarios del Influencer, y el 15% restante corresponde a la comisión por servicio y garantía de Io Sono.</li>
+              <li><strong>Inmovilización de fondos:</strong> Ninguna de las partes puede retirar o desviar el dinero mientras la campaña se encuentre en curso.</li>
+            </ul>
+          </div>
+
+          <div>
+            <div style={{ fontWeight: 700, fontSize: 13, color: "var(--purple-lt)", marginBottom: 4 }}>3. Plazos de Producción y Pautas Vinculantes</div>
+            <p style={{ margin: 0, color: "var(--text2)" }}>
+              El Influencer cuenta con un plazo estándar de <strong>72 horas hábiles</strong> (o el pactado en servicios a medida) desde la aceptación de la propuesta o desde la recepción fehaciente del producto físico. Todas las pautas y prohibiciones seleccionadas por la Marca al contratar (ej. mención en primeros segundos, ausencia de competidores, código de vestimenta) son vinculantes y de cumplimiento obligatorio.
+            </p>
+          </div>
+
+          <div>
+            <div style={{ fontWeight: 700, fontSize: 13, color: "var(--purple-lt)", marginBottom: 4 }}>4. Política de Borrador HD y Ajustes de Edición</div>
+            <p style={{ margin: 0, color: "var(--text2)" }}>
+              El material preliminar debe ser subido a la plataforma en formato vertical HD 9:16 para su previsualización. La Marca tiene derecho a solicitar <strong>un (1) ajuste menor de edición</strong> (recorte de planos, silenciado de una palabra, cambio de subtítulo o sticker). No se admiten cambios totales de guion ni solicitudes de regrabación completa que difieran de lo acordado inicialmente.
+            </p>
+          </div>
+
+          <div>
+            <div style={{ fontWeight: 700, fontSize: 13, color: "var(--purple-lt)", marginBottom: 4 }}>5. Publicación, Plazo de 36 Horas y Liberación de Fondos</div>
+            <p style={{ margin: 0, color: "var(--text2)" }}>
+              Una vez aprobado el borrador, el Influencer publica el contenido en sus redes y registra el enlace oficial en Io Sono. A partir de ese momento se inicia un <strong>temporizador de seguridad de 36 horas</strong>. Transcurrido dicho plazo con el video en línea respetando las pautas, los fondos se liberan de forma automática e irrevocable al saldo y CBU del creador, o de forma anticipada si la Marca presiona "Satisfecho".
+            </p>
+          </div>
+
+          <div>
+            <div style={{ fontWeight: 700, fontSize: 13, color: "var(--purple-lt)", marginBottom: 4 }}>6. Políticas de Cancelación Justa y Auditoría Antifraude</div>
+            <ul style={{ margin: "4px 0 0 16px", padding: 0, color: "var(--text2)" }}>
+              <li><strong>Propuesta Declinada:</strong> Si el Influencer no acepta o rechaza la oferta, se reembolsa el 100% del dinero de inmediato a la Marca.</li>
+              <li><strong>Cancelación tras filmación de buena fe:</strong> Si el creador entregó un borrador apto pero la marca desiste unilateralmente de usarlo, se liquida el 50% al creador por gastos y jornada de rodaje, y se reintegra el 50% a la Marca.</li>
+              <li><strong>Fraude o Incumplimiento Grave:</strong> Si el material viola pautas esenciales o no es entregado, la mediación dictaminará el reintegro total del 100% a la Marca.</li>
+            </ul>
+          </div>
+
+          <div>
+            <div style={{ fontWeight: 700, fontSize: 13, color: "var(--purple-lt)", marginBottom: 4 }}>7. Jurisdicción y Mediación</div>
+            <p style={{ margin: 0, color: "var(--text2)" }}>
+              Para cualquier controversia, las partes acuerdan someterse en primera instancia al tribunal de mediación interna de Io Sono encabezado por su administración, conforme a las leyes de la República Argentina.
+            </p>
+          </div>
+        </div>
+
+        <div style={{ marginTop: 20, paddingTop: 14, borderTop: "1px solid var(--border)", display: "flex", justifyContent: "flex-end" }}>
+          <button className="btn btn-primary" onClick={onClose} style={{ minWidth: 140 }}>
+            Entendido y Acepto ✓
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── MODAL DE CALIFICACIÓN Y CONFIANZA (1 al 10) ─────────────────────────────
 function RatingModal({ campaign, onClose, onSubmit }) {
   const [puntajeTrabajo, setPuntajeTrabajo] = useState(10);
@@ -889,7 +979,7 @@ function RatingModal({ campaign, onClose, onSubmit }) {
 }
 
 // ─── CHECKOUT CON CONDICIONES OBLIGATORIAS O "LIBRE ELECCIÓN" ─────────────────
-function Checkout({ data, onNav, user, onCampañaCreada }) {
+function Checkout({ data, onNav, user, onCampañaCreada, onOpenTerminos }) {
   const inf = data?.inf;
   const service = data?.service || DEFAULT_SERVICES[2];
   const priceNum = service ? (service.rawPrice || 120) : 120;
@@ -904,6 +994,8 @@ function Checkout({ data, onNav, user, onCampañaCreada }) {
   const [metodoPago, setMetodoPago] = useState("mercadopago"); // "mercadopago" | "saldo"
   const [mpModalOpen, setMpModalOpen] = useState(false);
   const [mpProcessing, setMpProcessing] = useState(false);
+  const [aceptaTerminos, setAceptaTerminos] = useState(true);
+  const [emailEnviado, setEmailEnviado] = useState(false);
 
   const toggleRestriction = (item) => {
     setModoCondicion("restringido");
@@ -920,8 +1012,8 @@ function Checkout({ data, onNav, user, onCampañaCreada }) {
     setErrorValidacion("");
   };
 
-  const formularioValido = modoCondicion === "libre" || 
-    (modoCondicion === "restringido" && (selectedRestrictions.length > 0 || customRestriction.trim().length > 0));
+  const formularioValido = (modoCondicion === "libre" || 
+    (modoCondicion === "restringido" && (selectedRestrictions.length > 0 || customRestriction.trim().length > 0))) && aceptaTerminos;
 
   const comisionIoSono = priceNum * 0.05;
   const totalAPagar = priceNum + comisionIoSono;
@@ -935,7 +1027,7 @@ function Checkout({ data, onNav, user, onCampañaCreada }) {
     }
 
     if (!formularioValido) {
-      setErrorValidacion("⚠️ Paso obligatorio: Debés marcar al menos una pauta que no quieras que salga o seleccionar 'Libre elección'.");
+      setErrorValidacion("⚠️ Paso obligatorio: Debés marcar las pautas deseadas y aceptar los Términos y Condiciones.");
       return;
     }
 
@@ -993,18 +1085,55 @@ function Checkout({ data, onNav, user, onCampañaCreada }) {
   };
 
   if (pagoConfirmado) {
+    const waText = encodeURIComponent(`¡Hola ${inf.name}! La marca te acaba de contratar para la campaña "${service.name}" en Io Sono con fondos asegurados en custodia Escrow por USD ${totalAPagar.toFixed(2)}. Ingresá a aceptarla y abrir el chat: https://iosonoinfluencer.com.ar`);
+
     return (
-      <div style={{ maxWidth:440, margin:"30px auto" }}>
-        <div className="card" style={{ textAlign:"center", padding:"30px 20px" }}>
+      <div style={{ maxWidth:460, margin:"20px auto" }}>
+        <div className="card" style={{ textAlign:"center", padding:"28px 20px" }}>
           <div style={{ width:64, height:64, borderRadius:"50%", background:"var(--purple-bg)", color:"var(--purple-lt)", fontSize:28, display:"flex", alignItems:"center", justifyContent:"center", margin:"0 auto 16px" }}>
             <i className="ti ti-shield-check" />
           </div>
-          <div style={{ fontSize:19, fontWeight:600, marginBottom:8 }}>¡Pago retenido en custodia!</div>
-          <div style={{ fontSize:13, color:"var(--text2)", lineHeight:1.6, marginBottom:20 }}>
+          <div style={{ fontSize:19, fontWeight:700, marginBottom:8 }}>¡Pago retenido en custodia!</div>
+          <div style={{ fontSize:13, color:"var(--text2)", lineHeight:1.6, marginBottom:16 }}>
             Tus <strong>USD {totalAPagar.toFixed(2)}</strong> están protegidos en Io Sono.
-            Le enviamos la propuesta y tus condiciones a <strong>{inf.name}</strong>.
-            Apenas acepte, se habilitará el chat para que te envíe el borrador.
+            Le enviamos la propuesta y tus pautas a <strong>{inf.name}</strong>.
+            Apenas acepte, se habilitará el chat exclusivo para entrega de borradores.
           </div>
+
+          {/* Opciones de Notificación Instantánea */}
+          <div style={{ background:"var(--bg2)", borderRadius:"var(--radius-sm)", padding:"14px", margin:"16px 0", border:"0.5px solid var(--border)", textAlign:"left" }}>
+            <div style={{ fontSize:12, fontWeight:700, color:"var(--text)", marginBottom:4, display:"flex", alignItems:"center", gap:6 }}>
+              <i className="ti ti-bell-ringing" style={{ color:"var(--purple-lt)" }} />
+              <span>Avisar al creador ahora mismo:</span>
+            </div>
+            <div style={{ fontSize:11, color:"var(--text2)", marginBottom:10 }}>
+              Podés acelerar el inicio de la producción notificándole directamente por WhatsApp o email:
+            </div>
+
+            <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
+              <a
+                href={`https://api.whatsapp.com/send?text=${waText}`}
+                target="_blank"
+                rel="noreferrer"
+                className="btn btn-green btn-full"
+                style={{ fontSize:12, padding:"10px", display:"flex", alignItems:"center", justifyContent:"center", gap:6, textDecoration:"none" }}
+              >
+                <i className="ti ti-brand-whatsapp" style={{ fontSize:16 }} />
+                <span>Notificar a {inf.name} por WhatsApp ↗</span>
+              </a>
+
+              <button
+                type="button"
+                className="btn btn-outline btn-full"
+                style={{ fontSize:12, padding:"10px", borderColor:"var(--purple)", color:"var(--purple-lt)" }}
+                onClick={() => setEmailEnviado(true)}
+              >
+                <i className="ti ti-mail" style={{ marginRight:4 }} />
+                {emailEnviado ? "✓ Notificación por Email enviada con éxito" : "Enviar notificación por Email"}
+              </button>
+            </div>
+          </div>
+
           <button className="btn btn-primary btn-full" onClick={() => onNav("campanas")}>
             Ver estado en Mis Campañas ↗
           </button>
@@ -1209,6 +1338,27 @@ function Checkout({ data, onNav, user, onCampañaCreada }) {
         </div>
       </div>
 
+      {/* Aceptación obligatoria de Términos y Condiciones */}
+      <div style={{ margin:"14px 0", background:"var(--bg2)", padding:"12px 14px", borderRadius:"var(--radius-sm)", border:"0.5px solid var(--border)", display:"flex", alignItems:"flex-start", gap:10 }}>
+        <input
+          type="checkbox"
+          id="terminosCheckbox"
+          checked={aceptaTerminos}
+          onChange={e => setAceptaTerminos(e.target.checked)}
+          style={{ marginTop:2, accentColor:"var(--purple)", width:16, height:16, cursor:"pointer" }}
+        />
+        <label htmlFor="terminosCheckbox" style={{ fontSize:11, color:"var(--text2)", lineHeight:1.5, cursor:"pointer" }}>
+          Declaro conocer y aceptar los{" "}
+          <span
+            style={{ color:"var(--purple-lt)", textDecoration:"underline", fontWeight:600 }}
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); onOpenTerminos?.(); }}
+          >
+            Términos y Condiciones Legales & Garantía Escrow (Mercado Pago)
+          </span>{" "}
+          de Io Sono, con retención preventiva de fondos y plazo de verificación de 36 horas.
+        </label>
+      </div>
+
       <button
         className="btn btn-primary btn-full"
         onClick={handlePagar}
@@ -1219,7 +1369,7 @@ function Checkout({ data, onNav, user, onCampañaCreada }) {
           boxShadow: metodoPago === "mercadopago" ? "0 4px 16px rgba(0,158,227,0.3)" : "none"
         }}
       >
-        {creando ? "Procesando custodia..." : !formularioValido ? "⚠️ Elegí pautas o Libre Elección para continuar" : metodoPago === "mercadopago" ? `Pagar $${totalEnPesos.toLocaleString("es-AR")} ARS con Mercado Pago ↗` : `Confirmar y pagar USD ${totalAPagar.toFixed(2)} ↗`}
+        {creando ? "Procesando custodia..." : !formularioValido ? "⚠️ Completá pautas y aceptá términos para continuar" : metodoPago === "mercadopago" ? `Pagar $${totalEnPesos.toLocaleString("es-AR")} ARS con Mercado Pago ↗` : `Confirmar y pagar USD ${totalAPagar.toFixed(2)} ↗`}
       </button>
 
       {/* MODAL OFICIAL DE CHECKOUT PRO MERCADO PAGO CON SPLIT Y RETENCIÓN */}
@@ -4805,6 +4955,7 @@ export default function IoSono() {
   const [screenData, setScreenData] = useState(null);
   const [user, setUser] = useState({ id:"admin", role:"admin", name:"Daniel Monaldi", email:"danielmonaldi@gmail.com" });
   const [ratingModalCamp, setRatingModalCamp] = useState(null);
+  const [terminosModalOpen, setTerminosModalOpen] = useState(false);
 
   // Lista de campañas activas en memoria con casos reales para probar
   const [campañas, setCampañas] = useState([
@@ -5044,7 +5195,13 @@ export default function IoSono() {
           />
         )}
         {screen === "hire" && (
-          <Checkout data={screenData} onNav={nav} user={user} onCampañaCreada={handleCampañaCreada} />
+          <Checkout
+            data={screenData}
+            onNav={nav}
+            user={user}
+            onCampañaCreada={handleCampañaCreada}
+            onOpenTerminos={() => setTerminosModalOpen(true)}
+          />
         )}
         {screen === "campanas" && (
           <CampañasView
@@ -5078,7 +5235,28 @@ export default function IoSono() {
             <Login onNav={nav} onLogin={(u) => { setUser(u); nav("buscador"); }} user={user} />
           )
         )}
+
+        {/* Pie de Página Oficial con Legales */}
+        <div style={{ textAlign:"center", padding:"24px 10px 80px", borderTop:"0.5px solid var(--border)", marginTop:36, fontSize:11, color:"var(--text3)" }}>
+          <div style={{ fontWeight:600, color:"var(--text2)", marginBottom:4 }}>
+            Io Sono Influencer Marketplace © 2026
+          </div>
+          <div>Pagos protegidos bajo custodia Escrow con Mercado Pago Oficial</div>
+          <div style={{ marginTop:8 }}>
+            <button
+              onClick={() => setTerminosModalOpen(true)}
+              style={{ background:"transparent", border:"none", color:"var(--purple-lt)", cursor:"pointer", fontSize:11, textDecoration:"underline" }}
+            >
+              📜 Términos y Condiciones Legales & Garantía de Custodia
+            </button>
+          </div>
+        </div>
       </div>
+
+      {/* Modal de Términos y Condiciones Legales & Garantía Escrow */}
+      {terminosModalOpen && (
+        <TerminosModal onClose={() => setTerminosModalOpen(false)} />
+      )}
 
       {/* Modal de Calificación 1 al 10 */}
       {ratingModalCamp && (
