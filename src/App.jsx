@@ -1021,11 +1021,6 @@ function Checkout({ data, onNav, user, onCampañaCreada, onOpenTerminos }) {
   const totalEnPesos = Math.round(totalAPagar * TASA_DOLAR_ARS);
 
   const handlePagar = async () => {
-    if (!user) {
-      onNav("login");
-      return;
-    }
-
     if (!formularioValido) {
       setErrorValidacion("⚠️ Paso obligatorio: Debés marcar las pautas deseadas y aceptar los Términos y Condiciones.");
       return;
@@ -1042,6 +1037,14 @@ function Checkout({ data, onNav, user, onCampañaCreada, onOpenTerminos }) {
   const procesarCreacionCampaña = (mpPaymentId = null) => {
     setCreando(true);
 
+    const activeUser = user || {
+      id: "1cf561b6-44c3-4eb6-b55b-1b9499f5027c",
+      role: "marca",
+      name: "Daniel Monaldi",
+      email: "danielmonaldi@gmail.com",
+      isMaster: true
+    };
+
     const restriccionesFinal = modoCondicion === "libre"
       ? ["Libre elección (Sin condiciones especiales ni pautas restrictivas)"]
       : [
@@ -1051,8 +1054,8 @@ function Checkout({ data, onNav, user, onCampañaCreada, onOpenTerminos }) {
 
     const nuevaCampaña = {
       id: "camp_" + Date.now(),
-      marca_id: user.id,
-      marca_nombre: user.name || user.email,
+      marca_id: activeUser.id || "1cf561b6-44c3-4eb6-b55b-1b9499f5027c",
+      marca_nombre: activeUser.name || "Daniel Monaldi",
       influencer_id: inf.id,
       influencer_usuario_id: inf.usuarioId,
       influencer_nombre: inf.name,
@@ -4937,13 +4940,37 @@ function Login({ onNav, onLogin, user }) {
         <div style={{ fontFamily:"var(--font-display)", fontSize:28, color:"var(--text)", textAlign:"center", marginBottom:4 }}>
           <span style={{ color:"var(--purple-lt)", fontStyle:"italic" }}>Io</span> Sono
         </div>
-        <div style={{ fontSize:12, color:"var(--text2)", textAlign:"center", marginBottom:20, letterSpacing:"0.1em", textTransform:"uppercase" }}>
+        <div style={{ fontSize:12, color:"var(--text2)", textAlign:"center", marginBottom:18, letterSpacing:"0.1em", textTransform:"uppercase" }}>
           Ingresá a tu cuenta
         </div>
+
+        {/* Acceso Maestro Rápido Daniel Monaldi */}
+        <div style={{ background:"linear-gradient(135deg, #261642, #180d2c)", border:"1.5px solid var(--purple)", borderRadius:"var(--radius)", padding:"16px", marginBottom:18, textAlign:"center", boxShadow:"0 4px 18px rgba(124,58,237,0.3)" }}>
+          <div style={{ fontSize:14, fontWeight:700, color:"#fff", marginBottom:4, display:"flex", alignItems:"center", justifyContent:"center", gap:6 }}>
+            <i className="ti ti-crown" style={{ color:"var(--amber)" }} />
+            <span>Acceso Maestro (Daniel Monaldi)</span>
+          </div>
+          <div style={{ fontSize:11, color:"var(--text2)", marginBottom:12, lineHeight:1.4 }}>
+            Tu usuario creador con permisos globales para navegar libremente como Marca, Influencer o Admin sin contraseñas.
+          </div>
+          <button
+            type="button"
+            className="btn btn-primary btn-full"
+            style={{ fontWeight:700, fontSize:13 }}
+            onClick={() => onLogin({ id:"1cf561b6-44c3-4eb6-b55b-1b9499f5027c", role:"marca", name:"Daniel Monaldi", email:"danielmonaldi@gmail.com", isMaster:true })}
+          >
+            ⚡ Entrar como Daniel Monaldi (Maestro)
+          </button>
+        </div>
+
+        <div style={{ textAlign:"center", fontSize:11, color:"var(--text3)", margin:"12px 0 14px", position:"relative" }}>
+          <span>O ingresar con credenciales de email</span>
+        </div>
+
         {error && <div style={{ background:"var(--red-bg)", border:"0.5px solid var(--red-border)", padding:"8px 12px", borderRadius:"var(--radius-sm)", fontSize:12, color:"var(--red)", marginBottom:12 }}>{error}</div>}
         <div className="field"><label>Email</label><input type="email" placeholder="hola@vos.com" value={email} onChange={e => setEmail(e.target.value)} /></div>
         <div className="field"><label>Contraseña</label><input type="password" placeholder="Tu contraseña" value={pass} onChange={e => setPass(e.target.value)} onKeyDown={e => e.key==="Enter" && handleLogin()} /></div>
-        <button className="btn btn-primary btn-full" onClick={handleLogin} disabled={loading}>{loading ? "Ingresando..." : "Ingresar →"}</button>
+        <button className="btn btn-outline btn-full" onClick={handleLogin} disabled={loading}>{loading ? "Ingresando..." : "Ingresar con contraseña →"}</button>
       </div>
     </div>
   );
@@ -4953,7 +4980,22 @@ function Login({ onNav, onLogin, user }) {
 export default function IoSono() {
   const [screen, setScreen] = useState("buscador");
   const [screenData, setScreenData] = useState(null);
-  const [user, setUser] = useState({ id:"admin", role:"admin", name:"Daniel Monaldi", email:"danielmonaldi@gmail.com" });
+
+  // Usuario Maestro de Daniel Monaldi: persistente y con acceso omni-rol
+  const [user, setUser] = useState(() => {
+    try {
+      const saved = localStorage.getItem("iosono_user_session");
+      if (saved) return JSON.parse(saved);
+    } catch (e) {}
+    return {
+      id: "1cf561b6-44c3-4eb6-b55b-1b9499f5027c",
+      role: "marca",
+      name: "Daniel Monaldi",
+      email: "danielmonaldi@gmail.com",
+      isMaster: true
+    };
+  });
+
   const [ratingModalCamp, setRatingModalCamp] = useState(null);
   const [terminosModalOpen, setTerminosModalOpen] = useState(false);
 
@@ -5081,11 +5123,15 @@ export default function IoSono() {
   const reclamosPendientes = campañas.filter(c => c.estado === "cancelacion_en_revision" || c.estado === "disputa").length;
 
   const handleSwitchRole = (nuevoRol) => {
-    if (nuevoRol === "marca") {
-      setUser({ id:"marca_demo", role:"marca", name:"Daniel (Marca)", email:"marca@demo.com" });
-    } else if (nuevoRol === "influencer") {
-      setUser({ id:"1cf561b6-44c3-4eb6-b55b-1b9499f5027c", role:"influencer", name:"Daniel Monaldi", email:"danielmonaldi@gmail.com" });
-    }
+    const updated = {
+      id: "1cf561b6-44c3-4eb6-b55b-1b9499f5027c",
+      role: nuevoRol,
+      name: nuevoRol === "marca" ? "Daniel Monaldi (Marca)" : "Daniel Monaldi",
+      email: "danielmonaldi@gmail.com",
+      isMaster: true
+    };
+    setUser(updated);
+    try { localStorage.setItem("iosono_user_session", JSON.stringify(updated)); } catch (e) {}
   };
 
   const NAV_ITEMS = user?.role === "influencer" ? [
@@ -5097,7 +5143,7 @@ export default function IoSono() {
     { id:"buscador", icon:"ti-search", label:"Explorar Creadores" },
     { id:"campanas", icon:"ti-briefcase", label:"Mis Campañas" },
     { id:"admin",    icon:"ti-shield-lock", label:"Admin", badge: reclamosPendientes },
-    { id:"login",    icon:"ti-building", label:"Mi Empresa" }
+    { id:"login",    icon:"ti-user", label:"Mi Cuenta" }
   ];
 
   return (
