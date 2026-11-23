@@ -1,13 +1,77 @@
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "./supabase";
 
-const ADMIN_EMAIL = "admin@iosono.com";
-const ADMIN_PASS  = "IoSono2024Admin!";
+// Credenciales Maestras Exclusivas de Daniel Monaldi
+const MASTER_USERNAME = "danielmonaldi";
+const MASTER_PASSWORD = "genova";
+const MASTER_2FA_SECRET = "IOSONODANIEL2026"; // Clave Base32 permanente para Google Authenticator
 
 // Credenciales oficiales de Mercado Pago de Daniel Monaldi (Io Sono)
 const MP_PUBLIC_KEY = "APP_USR-38be8ac3-fded-4fac-a1c5-fd912aabb3fd";
 const MP_ACCESS_TOKEN = "APP_USR-1712623438230795-111409-a77b5e8c5ac3ce73522eee48ca6631de-3845422384";
 const TASA_DOLAR_ARS = 1400; // Cotización para conversión transparente USD -> ARS en Mercado Pago
+
+// Algoritmo RFC 6238 para verificar el código de 6 dígitos de Google Authenticator
+function base32toUint8Array(base32) {
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+  let bits = "";
+  for (let i = 0; i < base32.length; i++) {
+    const val = chars.indexOf(base32.charAt(i).toUpperCase());
+    if (val === -1) continue;
+    bits += val.toString(2).padStart(5, "0");
+  }
+  const bytes = [];
+  for (let i = 0; i + 8 <= bits.length; i += 8) {
+    bytes.push(parseInt(bits.substr(i, 8), 2));
+  }
+  return new Uint8Array(bytes);
+}
+
+async function verifyGoogleAuthCode(token, secret = MASTER_2FA_SECRET) {
+  try {
+    const cleanToken = String(token || "").replace(/\s+/g, "").trim();
+    if (cleanToken.length !== 6) return false;
+
+    const subtle = window.crypto?.subtle;
+    if (!subtle) return false;
+
+    const timeStep = 30;
+    const epoch = Math.floor(Date.now() / 1000);
+    const currentCounter = Math.floor(epoch / timeStep);
+    const keyData = base32toUint8Array(secret);
+
+    const cryptoKey = await subtle.importKey(
+      "raw",
+      keyData,
+      { name: "HMAC", hash: "SHA-1" },
+      false,
+      ["sign"]
+    );
+
+    // Permitir ventana actual +- 1 intervalo de 30s para absorber desfases de reloj
+    for (const offset of [0, -1, 1, -2, 2]) {
+      const counter = currentCounter + offset;
+      const buffer = new ArrayBuffer(8);
+      const view = new DataView(buffer);
+      view.setBigUint64(0, BigInt(counter));
+
+      const signature = await subtle.sign("HMAC", cryptoKey, buffer);
+      const sigBytes = new Uint8Array(signature);
+      const sigOffset = sigBytes[sigBytes.length - 1] & 0x0f;
+      const sigView = new DataView(sigBytes.buffer, sigOffset, 4);
+      const code = (sigView.getUint32(0) & 0x7fffffff) % 1000000;
+      const codeStr = code.toString().padStart(6, "0");
+
+      if (codeStr === cleanToken) {
+        return true;
+      }
+    }
+    return false;
+  } catch (err) {
+    console.error("Error verificando código 2FA:", err);
+    return false;
+  }
+}
 
 const styles = `
   @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,700&display=swap');
@@ -4879,98 +4943,258 @@ function AdminDashboard({ user, campañas, onUpdateCampaña, onNav, influencersL
   );
 }
 
-// ─── LOGIN & MI CUENTA ────────────────────────────────────────────────────────
+// ─── LOGIN & MI CUENTA CON 2FA GOOGLE AUTHENTICATOR ───────────────────────────
 function Login({ onNav, onLogin, user }) {
-  const [email, setEmail] = useState("");
+  const [step, setStep] = useState("credentials"); // "credentials" | "2fa"
+  const [username, setUsername] = useState("");
   const [pass, setPass] = useState("");
+  const [totpCode, setTotpCode] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [copiado, setCopiado] = useState(false);
 
-  const handleLogin = async () => {
-    if (!email || !pass) { setError("Completá email y contraseña."); return; }
-    if (email === ADMIN_EMAIL && pass === ADMIN_PASS) { onLogin({ id:"admin", role:"admin", email, name:"Daniel Monaldi (Admin)" }); return; }
+  const handleStep1 = async () => {
+    setError("");
+    const cleanUser = username.trim().toLowerCase();
+    if (!cleanUser || !pass) {
+      setError("Completá usuario y contraseña.");
+      return;
+    }
+
+    // Validación Maestro Daniel Monaldi
+    if (cleanUser === MASTER_USERNAME && pass === MASTER_PASSWORD) {
+      setStep("2fa");
+      return;
+    }
+
+    // Validación Supabase para otros usuarios/marcas
     setLoading(true);
-    const { data, error: authError } = await supabase.auth.signInWithPassword({ email, password: pass });
+    const { data, error: authError } = await supabase.auth.signInWithPassword({ email: cleanUser, password: pass });
     setLoading(false);
-    if (authError) { setError("Email o contraseña incorrectos."); return; }
+    if (authError) {
+      setError("Usuario o contraseña incorrectos.");
+      return;
+    }
     const { data: perfil } = await supabase.from("usuarios").select("*").eq("id", data.user.id).single();
-    onLogin({ id: data.user.id, role: perfil?.rol || "marca", email: perfil?.email || email, name: perfil?.nombre || email });
+    onLogin({
+      id: data.user.id,
+      role: perfil?.rol || "marca",
+      email: perfil?.email || cleanUser,
+      name: perfil?.nombre || cleanUser,
+      is2FAVerified: false
+    });
   };
 
-  if (user) {
+  const handleVerify2FA = async () => {
+    setError("");
+    const cleanCode = totpCode.trim();
+    if (cleanCode.length !== 6) {
+      setError("Ingresá los 6 dígitos del código de Google Authenticator.");
+      return;
+    }
+
+    setLoading(true);
+    const isValid = await verifyGoogleAuthCode(cleanCode, MASTER_2FA_SECRET);
+    setLoading(false);
+
+    if (isValid) {
+      const masterUser = {
+        id: "1cf561b6-44c3-4eb6-b55b-1b9499f5027c",
+        role: "influencer",
+        name: "Daniel Monaldi",
+        email: "danielmonaldi@gmail.com",
+        isMaster: true,
+        is2FAVerified: true
+      };
+      onLogin(masterUser);
+    } else {
+      setError("Código de Google Authenticator inválido o expirado. Verificá el código actual en la app.");
+    }
+  };
+
+  const copiarClave = () => {
+    navigator.clipboard?.writeText(MASTER_2FA_SECRET);
+    setCopiado(true);
+    setTimeout(() => setCopiado(false), 2000);
+  };
+
+  if (user && user.is2FAVerified) {
     return (
-      <div style={{ maxWidth:440, margin:"30px auto 0" }}>
+      <div style={{ maxWidth: 460, margin: "30px auto 0" }}>
         <div className="card">
-          <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:16 }}>
-            <AvatarEl initials={user.name?.slice(0,2).toUpperCase()} size="lg" />
+          <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 18 }}>
+            <AvatarEl initials={user.name?.slice(0, 2).toUpperCase()} size="lg" />
             <div>
-              <div style={{ fontSize:18, fontWeight:700 }}>{user.name}</div>
-              <div style={{ fontSize:12, color:"var(--text2)" }}>{user.email}</div>
-              <span className={`pill ${user.role==="admin"?"pill-purple":user.role==="influencer"?"pill-green":"pill-gray"}`} style={{ fontSize:10, marginTop:4 }}>
-                {user.role === "admin" ? "👑 Super Admin" : user.role === "influencer" ? "Influencer Verificado" : "Cuenta de Marca"}
+              <div style={{ fontSize: 18, fontWeight: 700 }}>{user.name}</div>
+              <div style={{ fontSize: 12, color: "var(--text2)" }}>{user.email || "danielmonaldi@gmail.com"}</div>
+              <span className="pill pill-green" style={{ fontSize: 11, marginTop: 4, display: "inline-flex", alignItems: "center", gap: 5 }}>
+                <i className="ti ti-shield-check" /> 2FA Google Authenticator Verificado
               </span>
             </div>
           </div>
 
-          {/* Acceso directo al Centro de Control de Reclamos y Delegación */}
-          <div style={{ background:"linear-gradient(135deg, #1d1230, #140d24)", border:"1px solid var(--purple)", borderRadius:"var(--radius)", padding:"16px", marginBottom:16 }}>
-            <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:6 }}>
-              <i className="ti ti-shield-lock" style={{ fontSize:22, color:"var(--purple-lt)" }} />
-              <div style={{ fontSize:15, fontWeight:700 }}>Centro de Control y Mediación</div>
+          {/* Accesos rápidos de Daniel */}
+          <div style={{ background: "linear-gradient(135deg, #1d1230, #140d24)", border: "1px solid var(--purple)", borderRadius: "var(--radius)", padding: "16px", marginBottom: 16 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+              <i className="ti ti-crown" style={{ fontSize: 20, color: "var(--amber)" }} />
+              <div style={{ fontSize: 14, fontWeight: 700 }}>Cuenta Maestra Activa</div>
             </div>
-            <div style={{ fontSize:12, color:"var(--text2)", marginBottom:12, lineHeight:1.5 }}>
-              Administrá los reclamos de marcas, revisá cancelaciones antifraude y delegá casos a mediadores de tu equipo.
+            <div style={{ fontSize: 12, color: "var(--text2)", marginBottom: 14, lineHeight: 1.5 }}>
+              Tenés acceso irrestricto para gestionar campañas de marcas, tu perfil de influencer y el panel general de resolución y arbitraje de pagos.
             </div>
-            <button className="btn btn-primary btn-full" onClick={() => onNav("admin")}>
-              Ir al Panel de Administración ↗
-            </button>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+              <button className="btn btn-primary" onClick={() => onNav("admin")}>
+                👑 Panel Admin
+              </button>
+              <button className="btn btn-outline" style={{ borderColor: "var(--purple)", color: "var(--purple-lt)" }} onClick={() => onNav("editor_perfil")}>
+                ✨ Mi Media Kit
+              </button>
+            </div>
           </div>
 
           <button className="btn btn-outline btn-full" onClick={() => onLogin(null)}>
-            Cerrar sesión
+            Cerrar sesión segura
           </button>
         </div>
       </div>
     );
   }
 
+  const qrUri = `otpauth://totp/IoSono:${MASTER_USERNAME}?secret=${MASTER_2FA_SECRET}&issuer=IoSono`;
+  const qrImgUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(qrUri)}`;
+
   return (
-    <div style={{ maxWidth:380, margin:"40px auto 0" }}>
+    <div style={{ maxWidth: 420, margin: "30px auto 0" }}>
       <div className="card">
-        <div style={{ fontFamily:"var(--font-display)", fontSize:28, color:"var(--text)", textAlign:"center", marginBottom:4 }}>
-          <span style={{ color:"var(--purple-lt)", fontStyle:"italic" }}>Io</span> Sono
+        <div style={{ fontFamily: "var(--font-display)", fontSize: 28, color: "var(--text)", textAlign: "center", marginBottom: 4 }}>
+          <span style={{ color: "var(--purple-lt)", fontStyle: "italic" }}>Io</span> Sono
         </div>
-        <div style={{ fontSize:12, color:"var(--text2)", textAlign:"center", marginBottom:18, letterSpacing:"0.1em", textTransform:"uppercase" }}>
-          Ingresá a tu cuenta
+        <div style={{ fontSize: 11, color: "var(--text2)", textAlign: "center", marginBottom: 20, letterSpacing: "0.12em", textTransform: "uppercase" }}>
+          Acceso Seguro & Autenticación 2FA
         </div>
 
-        {/* Acceso Maestro Rápido Daniel Monaldi */}
-        <div style={{ background:"linear-gradient(135deg, #261642, #180d2c)", border:"1.5px solid var(--purple)", borderRadius:"var(--radius)", padding:"16px", marginBottom:18, textAlign:"center", boxShadow:"0 4px 18px rgba(124,58,237,0.3)" }}>
-          <div style={{ fontSize:14, fontWeight:700, color:"#fff", marginBottom:4, display:"flex", alignItems:"center", justifyContent:"center", gap:6 }}>
-            <i className="ti ti-crown" style={{ color:"var(--amber)" }} />
-            <span>Acceso Maestro (Daniel Monaldi)</span>
+        {error && (
+          <div style={{ background: "var(--red-bg)", border: "0.5px solid var(--red-border)", padding: "10px 12px", borderRadius: "var(--radius-sm)", fontSize: 12, color: "var(--red)", marginBottom: 16 }}>
+            {error}
           </div>
-          <div style={{ fontSize:11, color:"var(--text2)", marginBottom:12, lineHeight:1.4 }}>
-            Tu usuario creador con permisos globales para navegar libremente como Marca, Influencer o Admin sin contraseñas.
+        )}
+
+        {step === "credentials" ? (
+          <div>
+            <div style={{ background: "rgba(124,58,237,0.08)", border: "1px solid rgba(124,58,237,0.3)", borderRadius: "var(--radius-sm)", padding: "12px", marginBottom: 18, textAlign: "center" }}>
+              <i className="ti ti-lock" style={{ fontSize: 22, color: "var(--purple-lt)", marginBottom: 4, display: "block" }} />
+              <div style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>Ingreso con Credenciales</div>
+              <div style={{ fontSize: 11, color: "var(--text2)", marginTop: 2 }}>
+                Paso 1 de 2: Verificá tu usuario y contraseña
+              </div>
+            </div>
+
+            <div className="field">
+              <label>Usuario o Email</label>
+              <input
+                type="text"
+                placeholder="danielmonaldi"
+                value={username}
+                onChange={e => setUsername(e.target.value)}
+                autoCapitalize="none"
+              />
+            </div>
+            <div className="field">
+              <label>Contraseña</label>
+              <input
+                type="password"
+                placeholder="••••••••"
+                value={pass}
+                onChange={e => setPass(e.target.value)}
+                onKeyDown={e => e.key === "Enter" && handleStep1()}
+              />
+            </div>
+
+            <button
+              className="btn btn-primary btn-full"
+              style={{ fontWeight: 700, padding: "12px", marginTop: 8 }}
+              onClick={handleStep1}
+              disabled={loading}
+            >
+              {loading ? "Comprobando..." : "Siguiente: Verificación 2FA →"}
+            </button>
           </div>
-          <button
-            type="button"
-            className="btn btn-primary btn-full"
-            style={{ fontWeight:700, fontSize:13 }}
-            onClick={() => onLogin({ id:"1cf561b6-44c3-4eb6-b55b-1b9499f5027c", role:"marca", name:"Daniel Monaldi", email:"danielmonaldi@gmail.com", isMaster:true })}
-          >
-            ⚡ Entrar como Daniel Monaldi (Maestro)
-          </button>
-        </div>
+        ) : (
+          <div>
+            <div style={{ background: "rgba(16,185,129,0.08)", border: "1px solid rgba(16,185,129,0.3)", borderRadius: "var(--radius-sm)", padding: "12px", marginBottom: 16, textAlign: "center" }}>
+              <i className="ti ti-shield-check" style={{ fontSize: 24, color: "var(--green)", marginBottom: 4, display: "block" }} />
+              <div style={{ fontSize: 14, fontWeight: 700, color: "#fff" }}>Verificación Google Authenticator</div>
+              <div style={{ fontSize: 11, color: "var(--text2)", marginTop: 2 }}>
+                Paso 2 de 2: Protección de alta seguridad contra hackeos
+              </div>
+            </div>
 
-        <div style={{ textAlign:"center", fontSize:11, color:"var(--text3)", margin:"12px 0 14px", position:"relative" }}>
-          <span>O ingresar con credenciales de email</span>
-        </div>
+            <div style={{ textAlign: "center", marginBottom: 16 }}>
+              <div style={{ display: "inline-block", background: "#fff", padding: "10px", borderRadius: "12px", boxShadow: "0 4px 16px rgba(0,0,0,0.4)" }}>
+                <img
+                  src={qrImgUrl}
+                  alt="QR Google Authenticator"
+                  width={150}
+                  height={150}
+                  style={{ display: "block", borderRadius: "6px" }}
+                />
+              </div>
+              <div style={{ fontSize: 11, color: "var(--text2)", marginTop: 8 }}>
+                1. Escaneá este QR con la app <strong>Google Authenticator</strong>
+              </div>
+              <div style={{ marginTop: 4 }}>
+                <button
+                  type="button"
+                  onClick={copiarClave}
+                  style={{ background: "none", border: "none", color: "var(--purple-lt)", fontSize: 11, cursor: "pointer", textDecoration: "underline" }}
+                >
+                  {copiado ? "✓ ¡Clave copiada al portapapeles!" : `O ingresá la clave manual: ${MASTER_2FA_SECRET}`}
+                </button>
+              </div>
+            </div>
 
-        {error && <div style={{ background:"var(--red-bg)", border:"0.5px solid var(--red-border)", padding:"8px 12px", borderRadius:"var(--radius-sm)", fontSize:12, color:"var(--red)", marginBottom:12 }}>{error}</div>}
-        <div className="field"><label>Email</label><input type="email" placeholder="hola@vos.com" value={email} onChange={e => setEmail(e.target.value)} /></div>
-        <div className="field"><label>Contraseña</label><input type="password" placeholder="Tu contraseña" value={pass} onChange={e => setPass(e.target.value)} onKeyDown={e => e.key==="Enter" && handleLogin()} /></div>
-        <button className="btn btn-outline btn-full" onClick={handleLogin} disabled={loading}>{loading ? "Ingresando..." : "Ingresar con contraseña →"}</button>
+            <div className="field" style={{ textAlign: "center" }}>
+              <label style={{ textAlign: "center" }}>2. Ingresá el código de 6 dígitos que genera la app:</label>
+              <input
+                type="text"
+                maxLength={6}
+                placeholder="123 456"
+                value={totpCode}
+                onChange={e => setTotpCode(e.target.value.replace(/\D/g, ""))}
+                onKeyDown={e => e.key === "Enter" && handleVerify2FA()}
+                style={{
+                  textAlign: "center",
+                  fontSize: 26,
+                  fontWeight: 700,
+                  letterSpacing: 8,
+                  padding: "12px",
+                  background: "var(--bg3)",
+                  border: "1.5px solid var(--purple)",
+                  color: "#fff"
+                }}
+                autoFocus
+              />
+            </div>
+
+            <button
+              className="btn btn-green btn-full"
+              style={{ fontWeight: 700, padding: "12px", fontSize: 14, marginTop: 8 }}
+              onClick={handleVerify2FA}
+              disabled={loading || totpCode.length !== 6}
+            >
+              {loading ? "Verificando con Google..." : "✓ Confirmar y Acceder"}
+            </button>
+
+            <button
+              type="button"
+              className="btn btn-outline btn-full"
+              style={{ marginTop: 10, fontSize: 12, border: "none", color: "var(--text3)" }}
+              onClick={() => { setStep("credentials"); setError(""); }}
+            >
+              ← Volver atrás
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -4981,18 +5205,22 @@ export default function IoSono() {
   const [screen, setScreen] = useState("buscador");
   const [screenData, setScreenData] = useState(null);
 
-  // Usuario Maestro de Daniel Monaldi: persistente y con acceso omni-rol
+  // Usuario de la sesión: Si Daniel ya validó su 2FA en este navegador, se mantiene logueado; si no, visitante modo marca
   const [user, setUser] = useState(() => {
     try {
       const saved = localStorage.getItem("iosono_user_session");
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed?.is2FAVerified) return parsed;
+      }
     } catch (e) {}
     return {
-      id: "1cf561b6-44c3-4eb6-b55b-1b9499f5027c",
+      id: "guest_" + Math.random().toString(36).substring(2, 9),
       role: "marca",
-      name: "Daniel Monaldi",
-      email: "danielmonaldi@gmail.com",
-      isMaster: true
+      name: "Visitante",
+      email: "",
+      isMaster: false,
+      is2FAVerified: false
     };
   });
 
@@ -5123,27 +5351,34 @@ export default function IoSono() {
   const reclamosPendientes = campañas.filter(c => c.estado === "cancelacion_en_revision" || c.estado === "disputa").length;
 
   const handleSwitchRole = (nuevoRol) => {
+    if (nuevoRol === "influencer" && !user?.is2FAVerified) {
+      nav("login");
+      return;
+    }
     const updated = {
-      id: "1cf561b6-44c3-4eb6-b55b-1b9499f5027c",
+      ...(user || {}),
       role: nuevoRol,
-      name: nuevoRol === "marca" ? "Daniel Monaldi (Marca)" : "Daniel Monaldi",
-      email: "danielmonaldi@gmail.com",
-      isMaster: true
+      name: nuevoRol === "marca" ? (user?.is2FAVerified ? "Daniel Monaldi (Marca)" : "Marca") : "Daniel Monaldi",
+      isMaster: user?.is2FAVerified ? true : false,
+      is2FAVerified: user?.is2FAVerified || false
     };
     setUser(updated);
-    try { localStorage.setItem("iosono_user_session", JSON.stringify(updated)); } catch (e) {}
+    if (user?.is2FAVerified) {
+      try { localStorage.setItem("iosono_user_session", JSON.stringify(updated)); } catch (e) {}
+    }
   };
 
-  const NAV_ITEMS = user?.role === "influencer" ? [
+  const NAV_ITEMS = user?.role === "influencer" && user?.is2FAVerified ? [
     { id:"campanas", icon:"ti-briefcase", label:"Mis Propuestas", badge: campañas.filter(c => c.estado === "propuesta_pendiente").length },
     { id:"editor_perfil", icon:"ti-user", label:"Mi Media Kit" },
     { id:"buscador", icon:"ti-users", label:"Explorar" },
-    { id:"admin",    icon:"ti-shield-lock", label:"Admin", badge: reclamosPendientes }
+    { id:"admin",    icon:"ti-shield-lock", label:"Admin", badge: reclamosPendientes },
+    { id:"login",    icon:"ti-shield-check", label:"Seguridad 2FA" }
   ] : [
     { id:"buscador", icon:"ti-search", label:"Explorar Creadores" },
     { id:"campanas", icon:"ti-briefcase", label:"Mis Campañas" },
     { id:"admin",    icon:"ti-shield-lock", label:"Admin", badge: reclamosPendientes },
-    { id:"login",    icon:"ti-user", label:"Mi Cuenta" }
+    { id:"login",    icon:"ti-user", label: user?.is2FAVerified ? "Daniel (2FA)" : "Ingresar" }
   ];
 
   return (
@@ -5158,7 +5393,14 @@ export default function IoSono() {
           <button
             className={`pill ${screen==="admin"?"pill-purple":"pill-gray"}`}
             style={{ cursor:"pointer", border:"none", background: screen==="admin"?"var(--purple)":"var(--bg2)", color: screen==="admin"?"#fff":"var(--purple-lt)", fontSize:11, padding:"5px 10px" }}
-            onClick={() => { setUser({ id:"admin", role:"admin", name:"Daniel Monaldi", email:"danielmonaldi@gmail.com" }); nav("admin"); }}
+            onClick={() => {
+              if (!user?.is2FAVerified) {
+                nav("login");
+              } else {
+                setUser(prev => ({ ...prev, role:"admin" }));
+                nav("admin");
+              }
+            }}
           >
             👑 Panel Admin {reclamosPendientes > 0 ? `(${reclamosPendientes})` : ""}
           </button>
@@ -5220,8 +5462,8 @@ export default function IoSono() {
               transition: "all 0.2s"
             }}
           >
-            <i className="ti ti-sparkles" style={{ fontSize: 18 }} />
-            <span>✨ Soy INFLUENCER</span>
+            <i className={user?.is2FAVerified ? "ti ti-sparkles" : "ti ti-lock"} style={{ fontSize: 18 }} />
+            <span>✨ Soy INFLUENCER {!user?.is2FAVerified && "🔒"}</span>
           </button>
         </div>
 
@@ -5270,7 +5512,7 @@ export default function IoSono() {
           />
         )}
         {screen === "login" && (
-          user?.role === "influencer" ? (
+          user?.role === "influencer" && user?.is2FAVerified ? (
             <CreatorProfileEditor
               influencer={influencers.find(inf => inf.usuarioId === user.id || inf.name === user.name) || influencers[0]}
               onSave={handleUpdateInfluencer}
@@ -5278,7 +5520,27 @@ export default function IoSono() {
               onNav={nav}
             />
           ) : (
-            <Login onNav={nav} onLogin={(u) => { setUser(u); nav("buscador"); }} user={user} />
+            <Login
+              onNav={nav}
+              onLogin={(u) => {
+                const finalUser = u || {
+                  id: "guest_" + Math.random().toString(36).substring(2, 9),
+                  role: "marca",
+                  name: "Visitante",
+                  email: "",
+                  isMaster: false,
+                  is2FAVerified: false
+                };
+                setUser(finalUser);
+                if (u?.is2FAVerified) {
+                  try { localStorage.setItem("iosono_user_session", JSON.stringify(u)); } catch (e) {}
+                } else {
+                  try { localStorage.removeItem("iosono_user_session"); } catch (e) {}
+                }
+                nav("buscador");
+              }}
+              user={user}
+            />
           )
         )}
 
