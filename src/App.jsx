@@ -5061,7 +5061,7 @@ function Login({ onNav, onLogin, user }) {
   }
 
   const qrUri = `otpauth://totp/IoSono:${MASTER_USERNAME}?secret=${MASTER_2FA_SECRET}&issuer=IoSono`;
-  const qrImgUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(qrUri)}`;
+  const qrImgUrl = `https://api.qrserver.com/v1/create-qr-code/?size=280x280&margin=20&data=${encodeURIComponent(qrUri)}`;
 
   return (
     <div style={{ maxWidth: 420, margin: "30px auto 0" }}>
@@ -5129,32 +5129,65 @@ function Login({ onNav, onLogin, user }) {
               </div>
             </div>
 
+            {/* Acceso directo si estás desde el celular */}
+            <a
+              href={qrUri}
+              className="btn btn-primary btn-full"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 8,
+                padding: "12px",
+                fontSize: 13,
+                fontWeight: 700,
+                textDecoration: "none",
+                marginBottom: 16,
+                background: "linear-gradient(135deg, #7c3aed, #4f46e5)"
+              }}
+            >
+              <i className="ti ti-device-mobile" style={{ fontSize: 18 }} />
+              <span>📲 Vincular con 1 toque en tu celular</span>
+            </a>
+
             <div style={{ textAlign: "center", marginBottom: 16 }}>
-              <div style={{ display: "inline-block", background: "#fff", padding: "10px", borderRadius: "12px", boxShadow: "0 4px 16px rgba(0,0,0,0.4)" }}>
+              <div style={{ fontSize: 11, color: "var(--text3)", textTransform: "uppercase", letterSpacing: "1px", marginBottom: 8 }}>
+                O escanear el QR desde la app:
+              </div>
+              <div style={{ display: "inline-block", background: "#fff", padding: "12px", borderRadius: "14px", boxShadow: "0 4px 16px rgba(0,0,0,0.4)" }}>
                 <img
                   src={qrImgUrl}
                   alt="QR Google Authenticator"
-                  width={150}
-                  height={150}
+                  width={180}
+                  height={180}
                   style={{ display: "block", borderRadius: "6px" }}
                 />
               </div>
-              <div style={{ fontSize: 11, color: "var(--text2)", marginTop: 8 }}>
-                1. Escaneá este QR con la app <strong>Google Authenticator</strong>
-              </div>
-              <div style={{ marginTop: 4 }}>
+            </div>
+
+            {/* Alternativa Manual Fácil sin escanear */}
+            <div style={{ background: "var(--bg2)", border: "1px solid var(--border)", borderRadius: "var(--radius-sm)", padding: "12px", marginBottom: 16, textAlign: "left" }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: "#fff", marginBottom: 4, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <span>🔑 O ingresar la clave manual:</span>
                 <button
                   type="button"
                   onClick={copiarClave}
-                  style={{ background: "none", border: "none", color: "var(--purple-lt)", fontSize: 11, cursor: "pointer", textDecoration: "underline" }}
+                  style={{ background: "var(--purple)", border: "none", color: "#fff", padding: "4px 8px", borderRadius: "6px", fontSize: 11, cursor: "pointer", fontWeight: 600 }}
                 >
-                  {copiado ? "✓ ¡Clave copiada al portapapeles!" : `O ingresá la clave manual: ${MASTER_2FA_SECRET}`}
+                  {copiado ? "✓ ¡Copiado!" : "Copiar clave"}
                 </button>
+              </div>
+              <div style={{ fontSize: 11, color: "var(--text2)", lineHeight: 1.5 }}>
+                En Google Authenticator tocá el botón <strong>+</strong> ➔ <strong>"Ingresar clave de configuración"</strong>.
+                <br />
+                Nombre: <strong>Io Sono</strong>
+                <br />
+                Clave: <strong style={{ color: "var(--purple-lt)", letterSpacing: "1px" }}>{MASTER_2FA_SECRET}</strong>
               </div>
             </div>
 
             <div className="field" style={{ textAlign: "center" }}>
-              <label style={{ textAlign: "center" }}>2. Ingresá el código de 6 dígitos que genera la app:</label>
+              <label style={{ textAlign: "center" }}>Ingresá el código de 6 dígitos que genera la app:</label>
               <input
                 type="text"
                 maxLength={6}
